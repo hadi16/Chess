@@ -2,6 +2,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
+import java.util.ArrayList;
 
 public class ChessSetState extends JPanel
         implements ActionListener, MouseListener, MouseMotionListener, ComponentListener {
@@ -17,11 +18,9 @@ public class ChessSetState extends JPanel
     // Work with MouseMotionListener to show name of piece when user hovers over it.
     private Point hover = new Point();
 
-    private Point clickedPoint = new Point();
-    private Point prevClickedPoint = new Point();
+    private ArrayList<Point> clickedPoints = new ArrayList<>();
 
     // Counters determine whether to move piece and whose turn it is.
-    private boolean isClicked;
     private int currentTurn;
 
     private Rules chessRules = new Rules();
@@ -198,35 +197,27 @@ public class ChessSetState extends JPanel
     public void mousePressed(MouseEvent m) {
     }
 
-    private void resetClickVariables() {
-        prevClickedPoint = null;
-        clickedPoint = null;
-        isClicked = false;
-    }
-
     public void mouseClicked(MouseEvent mouseEvent) {
-        clickedPoint = getValidPoint(mouseEvent);
-        if (clickedPoint == null || clickedPoint == prevClickedPoint) {
-            resetClickVariables();
+        Point clickedPoint = getValidPoint(mouseEvent);
+        if (clickedPoint == null || (!clickedPoints.isEmpty() && clickedPoint == clickedPoints.get(0))) {
+            clickedPoints.clear();
             repaint();
             return;
         }
 
-        if (!isClicked) {
+        if (clickedPoints.isEmpty()) {
             Piece clickedPiece = board[clickedPoint.x][clickedPoint.y];
             if (clickedPiece == null || currentTurn != clickedPiece.getPlayer()) {
                 return;
             }
-            prevClickedPoint = clickedPoint;
+            clickedPoints.add(clickedPoint);
         } else {
-            if (chessRules.isLegalMove(prevClickedPoint, clickedPoint, board)) {
-                movePiece(prevClickedPoint, clickedPoint);
+            if (chessRules.isLegalMove(clickedPoints.get(0), clickedPoint, board)) {
+                movePiece(clickedPoints.get(0), clickedPoint);
             }
-            prevClickedPoint = null;
-            clickedPoint = null;
+            clickedPoints.clear();
         }
 
-        isClicked = !isClicked;
         repaint();
     }
 
@@ -259,22 +250,21 @@ public class ChessSetState extends JPanel
         board[3][7] = new Piece(PieceType.QUEEN, new Point(3, 7), 1, scaleDim);
         board[4][7] = new Piece(PieceType.KING, new Point(4, 7), 1, scaleDim);
 
-        // Other essential variables are reset.
-        resetClickVariables();
+        clickedPoints.clear();
         currentTurn = 1;
     }
 
     private void paintHighlights(Graphics canvas, Board theBoard) {
-        if (!isClicked || clickedPoint == null) {
+        if (clickedPoints.isEmpty()) {
             return;
         }
 
-        theBoard.drawGoldSquare(canvas, clickedPoint);
+        theBoard.drawGoldSquare(canvas, clickedPoints.get(0));
 
         for (int i = 0; i < Constants.BOARD_WIDTH; i++) {
             for (int j = 0; j < Constants.BOARD_WIDTH; j++) {
                 Point point = new Point(i, j);
-                if (chessRules.isLegalMove(clickedPoint, point, board)) {
+                if (chessRules.isLegalMove(clickedPoints.get(0), point, board)) {
                     theBoard.drawGreenSquare(canvas, point);
                 }
             }
