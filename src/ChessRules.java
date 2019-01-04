@@ -1,9 +1,9 @@
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ChessRules {
     private boolean isFriendlyFire(Point start, Point end, Piece[][] board) {
-        // If the ending square is null, the move doesn't constitute friendly fire.
         if (board[end.x][end.y] == null) {
             return false;
         }
@@ -54,14 +54,20 @@ public class ChessRules {
         int yAbsDifference = Math.abs(start.y - end.y);
 
         Piece pieceToMove = board[start.x][start.y];
-
-        ArrayList<Direction> legalDirections = pieceToMove.getPieceType().getLegalDirections(pieceToMove);
-        if (!legalDirections.contains(getDirection(start, end))) {
-            return false;
-        }
-
         switch (pieceToMove.getPieceType()) {
             case PAWN:
+                ArrayList<Direction> legalDirections = new ArrayList<>();
+                if (pieceToMove.getPlayer() == 0) {
+                    legalDirections.addAll(Arrays.asList(Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST));
+                }
+                else {
+                    legalDirections.addAll(Arrays.asList(Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST));
+                }
+
+                if (!legalDirections.contains(getDirection(start, end))) {
+                    return false;
+                }
+
                 if (!pieceToMove.hasMoved() && xAbsDifference == 0 && yAbsDifference == 2) {
                     return board[end.x][end.y] == null;
                 }
