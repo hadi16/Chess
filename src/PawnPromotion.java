@@ -1,9 +1,8 @@
 import javax.swing.*;
-import java.awt.*;
 
 public class PawnPromotion extends JPanel {
-    public PawnPromotion(Point position, int player, int scaleDim, Piece[][] board) {
-        PieceType[] PIECE_TYPES = {PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN};
+    public PawnPromotion(Piece pieceToPromote) {
+        PieceType[] PROMOTION_OPTIONS = {PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN};
 
         JFrame pawnPromotionFrame = new JFrame("Pawn Promotion");
 
@@ -16,13 +15,11 @@ public class PawnPromotion extends JPanel {
                     "Pawn Promotion",
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    PIECE_TYPES,
-                    PIECE_TYPES[0]
+                    PROMOTION_OPTIONS,
+                    PROMOTION_OPTIONS[0]
             );
         }
 
-        board[position.x][position.y] = new Piece(
-                selectedPieceType, new Point(position.x * scaleDim, position.y * scaleDim), player, scaleDim
-        );
+        pieceToPromote.setPieceType(selectedPieceType);
     }
 }

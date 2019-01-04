@@ -38,6 +38,10 @@ public class Piece {
         return pieceType;
     }
 
+    public void setPieceType(PieceType pieceType) {
+        this.pieceType = pieceType;
+    }
+
     public boolean hasMoved() {
         return moved;
     }

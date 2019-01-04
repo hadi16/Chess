@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChessSetState extends JPanel
         implements ActionListener, MouseListener, MouseMotionListener, ComponentListener {
@@ -9,7 +11,7 @@ public class ChessSetState extends JPanel
     private static JFrame mainFrame;
     private ChessRules chessRules = new ChessRules();
 
-    private Piece[][] board = new Piece[Constants.BOARD_WIDTH][Constants.BOARD_WIDTH];
+    private Map<Point, Piece> board = new HashMap<>();
     private int scaleDim;
 
     private Point hoverPoint;
@@ -57,13 +59,12 @@ public class ChessSetState extends JPanel
 
         // Resets scaleDim and repaints.
         scaleDim = frameDim / (Constants.BOARD_WIDTH + 1);
-        for (int i = 0; i < board.length; i++) {
-            for (int j = 0; j < board[0].length; j++) {
-                Piece piece = board[i][j];
-                if (piece != null) {
-                    piece.setPosition(new Point(i * scaleDim, j * scaleDim));
-                }
-            }
+        for (Map.Entry<Point, Piece> entry : board.entrySet()) {
+            Point position = entry.getKey();
+            Piece piece = entry.getValue();
+            piece.setPosition(new Point(position.x * scaleDim, position.y * scaleDim));
+
+            board.put(entry.getKey(), piece);
         }
         repaint();
     }
@@ -95,7 +96,12 @@ public class ChessSetState extends JPanel
 
     public void mouseMoved(MouseEvent mouseEvent) {
         Point pointClicked = getValidPoint(mouseEvent);
-        hoverPoint = (pointClicked == null || board[pointClicked.x][pointClicked.y] == null) ? null : pointClicked;
+        if (pointClicked == null || !board.containsKey(pointClicked)) {
+            hoverPoint = null;
+        }
+        else {
+            hoverPoint = pointClicked;
+        }
         repaint();
     }
 
@@ -199,7 +205,7 @@ public class ChessSetState extends JPanel
         }
 
         if (this.clickedPoint == null) {
-            Piece clickedPiece = board[clickedPoint.x][clickedPoint.y];
+            Piece clickedPiece = board.get(clickedPoint);
             if (clickedPiece == null || currentTurn != clickedPiece.getPlayer()) {
                 return;
             }
@@ -215,33 +221,33 @@ public class ChessSetState extends JPanel
     }
 
     public void resetBoard() {
-        board = new Piece[Constants.BOARD_WIDTH][Constants.BOARD_WIDTH];
+        board = new HashMap<>();
 
         // Player 0's pieces are set.
-        for (int i = 0; i < board.length; i++) {
-            board[i][1] = new Piece(PieceType.PAWN, new Point(i, 1), 0, scaleDim);
+        for (int i = 0; i < Constants.BOARD_WIDTH; i++) {
+            board.put(new Point(i, 1), new Piece(PieceType.PAWN, new Point(i, 1), 0, scaleDim));
         }
-        board[0][0] = new Piece(PieceType.ROOK, new Point(0, 0), 0, scaleDim);
-        board[7][0] = new Piece(PieceType.ROOK, new Point(7, 0), 0, scaleDim);
-        board[1][0] = new Piece(PieceType.KNIGHT, new Point(1, 0), 0, scaleDim);
-        board[6][0] = new Piece(PieceType.KNIGHT, new Point(6, 0), 0, scaleDim);
-        board[2][0] = new Piece(PieceType.BISHOP, new Point(2, 0), 0, scaleDim);
-        board[5][0] = new Piece(PieceType.BISHOP, new Point(5, 0), 0, scaleDim);
-        board[3][0] = new Piece(PieceType.QUEEN, new Point(3, 0), 0, scaleDim);
-        board[4][0] = new Piece(PieceType.KING, new Point(4, 0), 0, scaleDim);
+        board.put(new Point(0, 0), new Piece(PieceType.ROOK, new Point(0, 0), 0, scaleDim));
+        board.put(new Point(7, 0), new Piece(PieceType.ROOK, new Point(7, 0), 0, scaleDim));
+        board.put(new Point(1, 0), new Piece(PieceType.KNIGHT, new Point(1, 0), 0, scaleDim));
+        board.put(new Point(6, 0), new Piece(PieceType.KNIGHT, new Point(6, 0), 0, scaleDim));
+        board.put(new Point(2, 0), new Piece(PieceType.BISHOP, new Point(2, 0), 0, scaleDim));
+        board.put(new Point(5, 0), new Piece(PieceType.BISHOP, new Point(5, 0), 0, scaleDim));
+        board.put(new Point(3, 0), new Piece(PieceType.QUEEN, new Point(3, 0), 0, scaleDim));
+        board.put(new Point(4, 0), new Piece(PieceType.KING, new Point(4, 0), 0, scaleDim));
 
         // Player 1's pieces are set.
-        for (int i = 0; i < board.length; i++) {
-            board[i][6] = new Piece(PieceType.PAWN, new Point(i, 6), 1, scaleDim);
+        for (int i = 0; i < Constants.BOARD_WIDTH; i++) {
+            board.put(new Point(i, 6), new Piece(PieceType.PAWN, new Point(i, 6), 1, scaleDim));
         }
-        board[0][7] = new Piece(PieceType.ROOK, new Point(0, 7), 1, scaleDim);
-        board[7][7] = new Piece(PieceType.ROOK, new Point(7, 7), 1, scaleDim);
-        board[1][7] = new Piece(PieceType.KNIGHT, new Point(1, 7), 1, scaleDim);
-        board[6][7] = new Piece(PieceType.KNIGHT, new Point(6, 7), 1, scaleDim);
-        board[2][7] = new Piece(PieceType.BISHOP, new Point(2, 7), 1, scaleDim);
-        board[5][7] = new Piece(PieceType.BISHOP, new Point(5, 7), 1, scaleDim);
-        board[3][7] = new Piece(PieceType.QUEEN, new Point(3, 7), 1, scaleDim);
-        board[4][7] = new Piece(PieceType.KING, new Point(4, 7), 1, scaleDim);
+        board.put(new Point(0, 7), new Piece(PieceType.ROOK, new Point(0, 7), 1, scaleDim));
+        board.put(new Point(7, 7), new Piece(PieceType.ROOK, new Point(7, 7), 1, scaleDim));
+        board.put(new Point(1, 7), new Piece(PieceType.KNIGHT, new Point(1, 7), 1, scaleDim));
+        board.put(new Point(6, 7), new Piece(PieceType.KNIGHT, new Point(6, 7), 1, scaleDim));
+        board.put(new Point(2, 7), new Piece(PieceType.BISHOP, new Point(2, 7), 1, scaleDim));
+        board.put(new Point(5, 7), new Piece(PieceType.BISHOP, new Point(5, 7), 1, scaleDim));
+        board.put(new Point(3, 7), new Piece(PieceType.QUEEN, new Point(3, 7), 1, scaleDim));
+        board.put(new Point(4, 7), new Piece(PieceType.KING, new Point(4, 7), 1, scaleDim));
 
         clickedPoint = null;
         currentTurn = 1;
@@ -280,39 +286,28 @@ public class ChessSetState extends JPanel
         theBoard.drawChessBoard(canvas);
         paintHighlights(canvas, theBoard);
 
-        // The pieces are printed to the screen based on the value of each space
-        // in the array.
-        for (Piece[] pieces : board) {
-            for (Piece piece : pieces) {
-                if (piece != null) {
-                    piece.drawPiece(canvas, scaleDim);
-                }
-            }
+        for (Piece piece : board.values()) {
+            piece.drawPiece(canvas, scaleDim);
         }
 
         if (hoverPoint != null) {
-            board[hoverPoint.x][hoverPoint.y].drawHoverText(canvas, scaleDim);
+            board.get(hoverPoint).drawHoverText(canvas, scaleDim);
         }
     }
 
     public void movePiece(Point start, Point end) {
-        int player = board[start.x][start.y].getPlayer();
-
-        // The piece is moved to the new position in the array. The value of
-        // xPos and yPos are set accordingly. Old position in array is set to null.
-        board[end.x][end.y] = board[start.x][start.y];
-        board[start.x][start.y].setMoved(true);
-
-        board[end.x][end.y].setPosition(new Point(
+        Piece pieceToMove = board.remove(start);
+        pieceToMove.setMoved(true);
+        pieceToMove.setPosition(new Point(
                 end.x * scaleDim, end.y * scaleDim
         ));
-
-        board[start.x][start.y] = null;
+        board.put(end, pieceToMove);
 
         // Checks for pawn promotion.
-        if (board[end.x][end.y].getPieceType() == PieceType.PAWN) {
+        int player = pieceToMove.getPlayer();
+        if (pieceToMove.getPieceType() == PieceType.PAWN) {
             if ((player == 0 && end.y == 7) || (player == 1 && end.y == 0)) {
-                new PawnPromotion(end, player, scaleDim, board);
+                new PawnPromotion(pieceToMove);
             }
         }
 

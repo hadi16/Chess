@@ -1,14 +1,15 @@
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
 public class ChessRules {
-    private boolean isFriendlyFire(Point start, Point end, Piece[][] board) {
-        if (board[end.x][end.y] == null) {
+    private boolean isFriendlyFire(Point start, Point end, Map<Point, Piece> board) {
+        if (!board.containsKey(end)) {
             return false;
         }
 
-        return board[start.x][start.y].getPlayer() == board[end.x][end.y].getPlayer();
+        return board.get(start).getPlayer() == board.get(end).getPlayer();
     }
 
     private Direction getDirection(Point start, Point end) {
@@ -31,7 +32,7 @@ public class ChessRules {
                position.y >= 0 && position.y < Constants.BOARD_WIDTH;
     }
 
-    private boolean pieceClear(Point start, Point end, Piece[][] board) {
+    private boolean pieceClear(Point start, Point end, Map<Point, Piece> board) {
         Direction direction = getDirection(start, end);
         Point currentPosition = new Point(start.x + direction.getX(), start.y + direction.getY());
         if (!positionInBounds(currentPosition)) {
@@ -39,7 +40,7 @@ public class ChessRules {
         }
 
 		while (positionInBounds(currentPosition) && !currentPosition.equals(end)) {
-		    if (board[currentPosition.x][currentPosition.y] != null) {
+		    if (board.containsKey(currentPosition)) {
 		        return currentPosition.equals(end);
             }
 
@@ -49,11 +50,11 @@ public class ChessRules {
 		return true;
     }
 
-    private boolean isLegalForTypeOfPiece(Point start, Point end, Piece[][] board) {
+    private boolean isLegalForTypeOfPiece(Point start, Point end, Map<Point, Piece> board) {
         int xAbsDifference = Math.abs(start.x - end.x);
         int yAbsDifference = Math.abs(start.y - end.y);
 
-        Piece pieceToMove = board[start.x][start.y];
+        Piece pieceToMove = board.get(start);
         switch (pieceToMove.getPieceType()) {
             case PAWN:
                 ArrayList<Direction> legalDirections = new ArrayList<>();
@@ -69,10 +70,10 @@ public class ChessRules {
                 }
 
                 if (!pieceToMove.hasMoved() && xAbsDifference == 0 && yAbsDifference == 2) {
-                    return board[end.x][end.y] == null;
+                    return !board.containsKey(end);
                 }
 
-                if (board[end.x][end.y] != null) {
+                if (board.containsKey(end)) {
                     return xAbsDifference == 1 && yAbsDifference == 1;
                 }
 
@@ -102,12 +103,12 @@ public class ChessRules {
         }
     }
 
-    public boolean isLegalMove(Point start, Point end, Piece[][] board) {
+    public boolean isLegalMove(Point start, Point end, Map<Point, Piece> board) {
         if (isFriendlyFire(start, end, board) || !isLegalForTypeOfPiece(start, end, board)) {
             return false;
         }
 
-        if (board[start.x][start.y].getPieceType() == PieceType.KNIGHT) {
+        if (board.get(start).getPieceType() == PieceType.KNIGHT) {
             return true;
         }
 
