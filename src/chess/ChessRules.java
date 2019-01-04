@@ -1,3 +1,5 @@
+package chess;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,19 +29,14 @@ public class ChessRules {
         return null;
     }
 
-    private boolean positionInBounds(Point position) {
-        return position.x >= 0 && position.x < Constants.BOARD_WIDTH &&
-               position.y >= 0 && position.y < Constants.BOARD_WIDTH;
-    }
-
     private boolean pieceClear(Point start, Point end, Map<Point, Piece> board) {
         Direction direction = getDirection(start, end);
         Point currentPosition = new Point(start.x + direction.getX(), start.y + direction.getY());
-        if (!positionInBounds(currentPosition)) {
+        if (!Helpers.positionInBounds(currentPosition)) {
             return false;
         }
 
-		while (positionInBounds(currentPosition) && !currentPosition.equals(end)) {
+		while (Helpers.positionInBounds(currentPosition) && !currentPosition.equals(end)) {
 		    if (board.containsKey(currentPosition)) {
 		        return currentPosition.equals(end);
             }

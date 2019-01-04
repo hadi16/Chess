@@ -1,7 +1,18 @@
+package chess.action;
+
+import chess.Piece;
+import chess.PieceType;
+
 import javax.swing.*;
 
-public class PawnPromotion extends JPanel {
-    public PawnPromotion(Piece pieceToPromote) {
+public class PawnPromotionAction extends JPanel {
+    private Piece pawnToPromote;
+
+    public PawnPromotionAction(Piece pawnToPromote) {
+        this.pawnToPromote = pawnToPromote;
+    }
+
+    public void promotePawn() {
         PieceType[] PROMOTION_OPTIONS = {PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN};
 
         JFrame pawnPromotionFrame = new JFrame("Pawn Promotion");
@@ -20,6 +31,6 @@ public class PawnPromotion extends JPanel {
             );
         }
 
-        pieceToPromote.setPieceType(selectedPieceType);
+        pawnToPromote.setPieceType(selectedPieceType);
     }
 }

@@ -1,3 +1,5 @@
+package chess;
+
 public enum PieceType {
     PAWN("\u2659"),
     ROOK("\u2656"),
