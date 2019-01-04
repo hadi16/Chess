@@ -2,7 +2,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Rules {
+public class ChessRules {
     private enum Direction {
         NORTH(0, -1),
         EAST(1, 0),

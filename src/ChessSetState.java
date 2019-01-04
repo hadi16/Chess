@@ -2,28 +2,21 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
 
 public class ChessSetState extends JPanel
         implements ActionListener, MouseListener, MouseMotionListener, ComponentListener {
 
     private static JFrame mainFrame;
+    private ChessRules chessRules = new ChessRules();
 
-    // Dimension of each square on the chess board.
+    private Piece[][] board = new Piece[Constants.BOARD_WIDTH][Constants.BOARD_WIDTH];
     private int scaleDim;
 
-    // Array stores values of chess pieces.
-    private Piece[][] board = new Piece[Constants.BOARD_WIDTH][Constants.BOARD_WIDTH];
-
-    // Work with MouseMotionListener to show name of piece when user hovers over it.
-    private Point hover = new Point();
-
-    private ArrayList<Point> clickedPoints = new ArrayList<>();
+    private Point hoverPoint;
+    private Point clickedPoint;
 
     // Counters determine whether to move piece and whose turn it is.
     private int currentTurn;
-
-    private Rules chessRules = new Rules();
 
     public static void main(String[] args) {
         // These commands set up the JFrame size and behavior.
@@ -102,7 +95,7 @@ public class ChessSetState extends JPanel
 
     public void mouseMoved(MouseEvent mouseEvent) {
         Point pointClicked = getValidPoint(mouseEvent);
-        hover = (pointClicked == null || board[pointClicked.x][pointClicked.y] == null) ? null : pointClicked;
+        hoverPoint = (pointClicked == null || board[pointClicked.x][pointClicked.y] == null) ? null : pointClicked;
         repaint();
     }
 
@@ -199,23 +192,23 @@ public class ChessSetState extends JPanel
 
     public void mouseClicked(MouseEvent mouseEvent) {
         Point clickedPoint = getValidPoint(mouseEvent);
-        if (clickedPoint == null || (!clickedPoints.isEmpty() && clickedPoint == clickedPoints.get(0))) {
-            clickedPoints.clear();
+        if (clickedPoint == null || this.clickedPoint == clickedPoint) {
+            this.clickedPoint = null;
             repaint();
             return;
         }
 
-        if (clickedPoints.isEmpty()) {
+        if (this.clickedPoint == null) {
             Piece clickedPiece = board[clickedPoint.x][clickedPoint.y];
             if (clickedPiece == null || currentTurn != clickedPiece.getPlayer()) {
                 return;
             }
-            clickedPoints.add(clickedPoint);
+            this.clickedPoint = clickedPoint;
         } else {
-            if (chessRules.isLegalMove(clickedPoints.get(0), clickedPoint, board)) {
-                movePiece(clickedPoints.get(0), clickedPoint);
+            if (chessRules.isLegalMove(this.clickedPoint, clickedPoint, board)) {
+                movePiece(this.clickedPoint, clickedPoint);
             }
-            clickedPoints.clear();
+            this.clickedPoint = null;
         }
 
         repaint();
@@ -250,21 +243,21 @@ public class ChessSetState extends JPanel
         board[3][7] = new Piece(PieceType.QUEEN, new Point(3, 7), 1, scaleDim);
         board[4][7] = new Piece(PieceType.KING, new Point(4, 7), 1, scaleDim);
 
-        clickedPoints.clear();
+        clickedPoint = null;
         currentTurn = 1;
     }
 
     private void paintHighlights(Graphics canvas, Board theBoard) {
-        if (clickedPoints.isEmpty()) {
+        if (clickedPoint == null) {
             return;
         }
 
-        theBoard.drawGoldSquare(canvas, clickedPoints.get(0));
+        theBoard.drawGoldSquare(canvas, clickedPoint);
 
         for (int i = 0; i < Constants.BOARD_WIDTH; i++) {
             for (int j = 0; j < Constants.BOARD_WIDTH; j++) {
                 Point point = new Point(i, j);
-                if (chessRules.isLegalMove(clickedPoints.get(0), point, board)) {
+                if (chessRules.isLegalMove(clickedPoint, point, board)) {
                     theBoard.drawGreenSquare(canvas, point);
                 }
             }
@@ -297,8 +290,8 @@ public class ChessSetState extends JPanel
             }
         }
 
-        if (hover != null) {
-            board[hover.x][hover.y].drawHoverText(canvas, scaleDim);
+        if (hoverPoint != null) {
+            board[hoverPoint.x][hoverPoint.y].drawHoverText(canvas, scaleDim);
         }
     }
 
