@@ -56,7 +56,7 @@ public class ChessSetState extends JPanel
         int frameDim = height < width ? height : width;
 
         // Resets scaleDim and repaints.
-        scaleDim = frameDim / 10;
+        scaleDim = frameDim / (Constants.BOARD_WIDTH + 1);
         for (int i = 0; i < board.length; i++) {
             for (int j = 0; j < board[0].length; j++) {
                 Piece piece = board[i][j];
@@ -88,7 +88,7 @@ public class ChessSetState extends JPanel
         );
 
         boolean inBounds = pointClicked.x >= 0 && pointClicked.x <= 7
-                && pointClicked.y >= 0 && pointClicked.y <= 7;
+                        && pointClicked.y >= 0 && pointClicked.y <= 7;
 
         return inBounds ? pointClicked : null;
     }

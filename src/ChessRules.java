@@ -1,27 +1,7 @@
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class ChessRules {
-    private enum Direction {
-        NORTH(0, -1),
-        EAST(1, 0),
-        SOUTH(0, 1),
-        WEST(-1, 0),
-        NORTHEAST(1, -1),
-        NORTHWEST(-1, -1),
-        SOUTHEAST(1, 1),
-        SOUTHWEST(-1, 1);
-
-        private int x;
-        private int y;
-
-        Direction(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
-
     private boolean isFriendlyFire(Point start, Point end, Piece[][] board) {
         // If the ending square is null, the move doesn't constitute friendly fire.
         if (board[end.x][end.y] == null) {
@@ -39,39 +19,34 @@ public class ChessRules {
         int y = yDifference == 0 ? 0 : yDifference / Math.abs(yDifference);
 
         for (Direction direction : Direction.values()) {
-            if (direction.x == x && direction.y == y) {
+            if (direction.getX() == x && direction.getY() == y) {
                 return direction;
             }
         }
         return null;
     }
 
-    private boolean positionInBounds(Point point) {
-        return point.x >= 0 && point.x <= Constants.BOARD_WIDTH - 1 &&
-                point.y >= 0 && point.y <= Constants.BOARD_WIDTH;
+    private boolean positionInBounds(Point position) {
+        return position.x >= 0 && position.x < Constants.BOARD_WIDTH &&
+               position.y >= 0 && position.y < Constants.BOARD_WIDTH;
     }
 
-    private boolean pieceObstructingMove(Point start, Point end, Piece[][] board) {
-        // TODO: Fix this.
+    private boolean pieceClear(Point start, Point end, Piece[][] board) {
         Direction direction = getDirection(start, end);
+        Point currentPosition = new Point(start.x + direction.getX(), start.y + direction.getY());
+        if (!positionInBounds(currentPosition)) {
+            return false;
+        }
 
-        //start.x += direction.x;
-        //start.y += direction.y;
+		while (positionInBounds(currentPosition) && !currentPosition.equals(end)) {
+		    if (board[currentPosition.x][currentPosition.y] != null) {
+		        return currentPosition.equals(end);
+            }
 
-        //if (!positionInBounds(start)) return false;
-		/*
-		while (board[start.x][start.y] != null) {
-			if (start == end) {
-				break;
-			}
-
-			start.x += direction.x;
-			start.y += direction.y;
-
-			//if (!positionInBounds(start)) return false;
+			currentPosition.x += direction.getX();
+			currentPosition.y += direction.getY();
 		}
-		return start != end;*/
-        return false;
+		return true;
     }
 
     private boolean isLegalForTypeOfPiece(Point start, Point end, Piece[][] board) {
@@ -79,21 +54,16 @@ public class ChessRules {
         int yAbsDifference = Math.abs(start.y - end.y);
 
         Piece pieceToMove = board[start.x][start.y];
+
+        ArrayList<Direction> legalDirections = pieceToMove.getPieceType().getLegalDirections(pieceToMove);
+        if (!legalDirections.contains(getDirection(start, end))) {
+            return false;
+        }
+
         switch (pieceToMove.getPieceType()) {
             case PAWN:
-                ArrayList<Direction> legalDirections = new ArrayList<>();
-                if (pieceToMove.getPlayer() == 0) {
-                    legalDirections.addAll(Arrays.asList(Direction.SOUTH, Direction.SOUTHEAST, Direction.SOUTHWEST));
-                } else {
-                    legalDirections.addAll(Arrays.asList(Direction.NORTH, Direction.NORTHEAST, Direction.NORTHWEST));
-                }
-
-                if (!legalDirections.contains(getDirection(start, end))) {
-                    return false;
-                }
-
                 if (!pieceToMove.hasMoved() && xAbsDifference == 0 && yAbsDifference == 2) {
-                    return true;
+                    return board[end.x][end.y] == null;
                 }
 
                 if (board[end.x][end.y] != null) {
@@ -122,7 +92,7 @@ public class ChessRules {
                 // A King can move in one square horizontally, vertically, or diagonally.
                 return xAbsDifference + yAbsDifference == 1 || (xAbsDifference == 1 && yAbsDifference == 1);
             default:
-                return false;
+                return true;
         }
     }
 
@@ -135,6 +105,6 @@ public class ChessRules {
             return true;
         }
 
-        return !pieceObstructingMove(start, end, board);
+        return pieceClear(start, end, board);
     }
 }
