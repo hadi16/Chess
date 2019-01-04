@@ -19,20 +19,20 @@ public class ChessMouseListener extends ChessListener implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
-        Point clickedPoint = chessState.getValidPointOrNull(new Point(mouseEvent.getX(), mouseEvent.getY()));
+        Point clickedPoint = getValidPointOrNull(new Point(mouseEvent.getX(), mouseEvent.getY()));
         if (clickedPoint == null || chessState.getClickedPoint() == clickedPoint) {
             chessState.setClickedPoint(null);
             return;
         }
 
         if (chessState.getClickedPoint() == null) {
-            Piece clickedPiece = chessState.getBoardDeepCopy().get(clickedPoint);
+            Piece clickedPiece = chessState.getBoard().get(clickedPoint);
             if (clickedPiece == null || !chessState.isMyTurn(clickedPiece.getPlayer())) {
                 return;
             }
             chessState.setClickedPoint(clickedPoint);
         } else {
-            if (chessRules.isLegalMove(chessState.getClickedPoint(), clickedPoint, chessState.getBoardDeepCopy())) {
+            if (chessRules.isLegalMove(chessState.getClickedPoint(), clickedPoint, chessState.getBoard())) {
                 ChessMoveAction chessMoveAction = new ChessMoveAction(chessState);
                 chessMoveAction.movePiece(chessState.getClickedPoint(), clickedPoint);
             }

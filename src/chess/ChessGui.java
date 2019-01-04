@@ -46,7 +46,7 @@ public class ChessGui extends JPanel {
                         canvas.setColor(Helpers.GOLD);
                     }
 
-                    if (chessRules.isLegalMove(clickedPoint, currentBoardPosition, chessState.getBoardDeepCopy())) {
+                    if (chessRules.isLegalMove(clickedPoint, currentBoardPosition, chessState.getBoard())) {
                         canvas.setColor(Color.green);
                         canvas.fillRect(
                                 i * scaleDim + (scaleDim / 32),
@@ -64,7 +64,7 @@ public class ChessGui extends JPanel {
     }
 
     private void drawPieces(Graphics canvas) {
-        for (Map.Entry<Point, Piece> entry : chessState.getBoardDeepCopy().entrySet()) {
+        for (Map.Entry<Point, Piece> entry : chessState.getBoard().entrySet()) {
             Point position = entry.getKey();
             Piece piece = entry.getValue();
 
@@ -86,7 +86,7 @@ public class ChessGui extends JPanel {
             return;
         }
 
-        Piece pieceUnderHoverText = chessState.getBoardDeepCopy().get(hoverPoint);
+        Piece pieceUnderHoverText = chessState.getBoard().get(hoverPoint);
 
         canvas.setColor(pieceUnderHoverText.getPlayer() == 0 ? Color.white : Color.black);
         canvas.setFont(new Font("Arial", Font.BOLD, (scaleDim / 5)));

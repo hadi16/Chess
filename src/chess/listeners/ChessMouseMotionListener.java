@@ -14,7 +14,7 @@ public class ChessMouseMotionListener extends ChessListener implements MouseMoti
 
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
-        Point pointClicked = chessState.getValidPointOrNull(new Point(mouseEvent.getX(), mouseEvent.getY()));
+        Point pointClicked = getValidPointOrNull(new Point(mouseEvent.getX(), mouseEvent.getY()));
         if (pointClicked == null || !chessState.positionInBoard(pointClicked)) {
             chessState.setHoverPoint(null);
         }
