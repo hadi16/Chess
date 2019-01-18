@@ -1,36 +1,43 @@
 package chess.action;
 
-import chess.Piece;
 import chess.PieceType;
 
-import javax.swing.*;
+import java.awt.*;
 
-public class PawnPromotionAction extends JPanel {
-    private Piece pawnToPromote;
+/**
+ * Class: PawnPromotionAction
+ * Action in the game triggered by a pawn being promoted to a rook, knight, bishop, or queen.
+ * Inherits from ChessMoveAction.
+ *
+ * @author Alex Hadi
+ * @version January 2019
+ */
+public class PawnPromotionAction extends ChessMoveAction {
+    // The promoted piece type can never be reassigned.
+    private final PieceType promotedPieceType;
 
-    public PawnPromotionAction(Piece pawnToPromote) {
-        this.pawnToPromote = pawnToPromote;
+    /**
+     * Constructor: PawnPromotionAction
+     * Creates a new action to promote a pawn.
+     *
+     * @param playerId The player's ID.
+     * @param startPoint The starting position of the pawn.
+     * @param endPoint The ending position of the pawn.
+     * @param promotedPieceType The type of piece that the player wishes to promote the pawn to.
+     */
+    public PawnPromotionAction(int playerId, Point startPoint, Point endPoint, PieceType promotedPieceType) {
+        super(playerId, startPoint, endPoint);
+
+        this.promotedPieceType = promotedPieceType;
     }
 
-    public void promotePawn() {
-        PieceType[] PROMOTION_OPTIONS = {PieceType.ROOK, PieceType.KNIGHT, PieceType.BISHOP, PieceType.QUEEN};
-
-        JFrame pawnPromotionFrame = new JFrame("Pawn Promotion");
-
-        // While loop runs until the user selects an option from the dialog box.
-        PieceType selectedPieceType = null;
-        while (selectedPieceType == null) {
-            selectedPieceType = (PieceType) JOptionPane.showInputDialog(
-                    pawnPromotionFrame,
-                    "You can promote your pawn. Please select from the following options.",
-                    "Pawn Promotion",
-                    JOptionPane.QUESTION_MESSAGE,
-                    null,
-                    PROMOTION_OPTIONS,
-                    PROMOTION_OPTIONS[0]
-            );
-        }
-
-        pawnToPromote.setPieceType(selectedPieceType);
+    /**
+     * Getter: getPromotedPieceType
+     * Gets the type of piece that the player wishes to promote the pawn to.
+     *
+     * @return The piece type to promote the pawn to.
+     */
+    public PieceType getPromotedPieceType() {
+        return promotedPieceType;
     }
 }

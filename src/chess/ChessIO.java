@@ -1,85 +1,128 @@
 package chess;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.io.File;
+import java.io.*;
 
+/**
+ * Class: ChessIO
+ * Allows a chess state to be saved or opened.
+ * Called by the ChessGame class.
+ *
+ * @author Alex Hadi
+ * @version January 2019
+ */
 public class ChessIO {
-    // TODO: Finish the FILE IO.
-    public void actionPerformed(ActionEvent actionEvent) {
-        switch (actionEvent.getActionCommand()) {
-            case "Save": {
-                // JFileChooser is utilized to allow the user to choose whichever
-                // save location they prefer.
-                JFrame saveDialog = new JFrame();
-                saveDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    /**
+     * Helper Method: getFileChooser
+     * Gets a new JFileChooser with a filter for text files.
+     *
+     * @return The JFileChooser instance.
+     */
+    private JFileChooser getFileChooser() {
+        JFileChooser fileChooser = new JFileChooser();
 
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Please choose a save location and name.");
+        // Can only open or save a chess state as a .txt file.
+        fileChooser.setFileFilter(
+                new FileNameExtensionFilter("Text Files: *.txt", "txt")
+        );
 
-                File saveFile;
-                // If user clicks "Save", the file path is updated accordingly.
-                // Otherwise, the save operation is aborted.
-                try {
-                    // JFileChooser.APPROVE_OPTION signifies that the user selected a save location.
-                    if (fileChooser.showSaveDialog(saveDialog) == JFileChooser.APPROVE_OPTION) {
-                        saveFile = fileChooser.getSelectedFile();
-                        // CSV file extension is added to ensure file format remains
-                        // the same throughout all save files.
+        return fileChooser;
+    }
 
-                        String path = saveFile.getAbsolutePath();
-                        if (!path.endsWith(".csv")) {
-                            saveFile = new File(path + ".csv");
-                        }
+    /**
+     * Method: saveGame
+     * Saves the passed in ChessState to a file.
+     * JFileChooser used to allow the user to choose the file location.
+     *
+     * @param stateToSave The ChessState to save to a file.
+     */
+    public void saveGame(ChessState stateToSave) {
+        // Create the save dialog.
+        JFrame saveDialog = new JFrame();
+        saveDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-                        System.out.println(
-                                "The file was successfully created in the directory: " + saveFile.getAbsolutePath()
-                        );
-                    }
-                } catch (HeadlessException e) {
-                    e.printStackTrace();
-                }
+        // Initialize the JFileChooser.
+        JFileChooser fileChooser = getFileChooser();
+        fileChooser.setDialogTitle("Please choose a save location and name.");
 
-                // TODO: Finish save method.
-
-                break;
+        File filename;
+        try {
+            // When the user clicks the "OK" button.
+            if (fileChooser.showSaveDialog(saveDialog) == JFileChooser.APPROVE_OPTION) {
+                filename = fileChooser.getSelectedFile();
+                System.out.println(
+                        "The file was successfully created: " + filename.getAbsolutePath()
+                );
+            // If the user clicked the cancel option, notify the user.
+            } else {
+                System.out.println("The save operation was cancelled.");
+                return;
             }
-            case "Open": {
-                // JFileChooser is utilized to allow the user to choose to open the
-                // file from wherever they prefer.
-                JFrame openDialog = new JFrame();
-                openDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        // If there is an error, print the stack trace and return.
+        } catch (HeadlessException e) {
+            e.printStackTrace();
+            return;
+        }
 
-                JFileChooser fileChooser = new JFileChooser();
-                fileChooser.setDialogTitle("Please choose a CSV file to open.");
+        try {
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(
+                    new FileOutputStream(filename)
+            );
 
-                File saveFile;
-                // If user selects a file, this is executed.
-                if (fileChooser.showOpenDialog(openDialog) == JFileChooser.APPROVE_OPTION) {
-                    String path = fileChooser.getSelectedFile().getAbsolutePath();
+            // GameState object is serialized.
+            objectOutputStream.writeObject(stateToSave);
 
-                    // File is checked to ensure that it has a CSV extension.
-                    if (!path.endsWith(".csv")) {
-                        System.err.println("The file must have a CSV extension.");
-                        return;
-                    }
+            objectOutputStream.close();
+            System.out.println("The game state was successfully saved: " + filename.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
-                    saveFile = fileChooser.getSelectedFile();
-                    System.out.println("The file was successfully opened: " + saveFile.getAbsolutePath());
-                }
+    /**
+     * Method: openGame
+     * Opens a previously saved ChessState from file.
+     * JFileChooser used to allow the user to choose the file location.
+     *
+     * @return The de-serialized ChessState object.
+     */
+    public ChessState openGame() {
+        // Create the open dialog.
+        JFrame openDialog = new JFrame();
+        openDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-                // TODO: Finish open method.
+        // Initialize the JFileChooser
+        JFileChooser fileChooser = getFileChooser();
+        fileChooser.setDialogTitle("Please choose a saved game file to open.");
 
-                System.out.println("The game state was successfully restored!");
-                //chessGui.repaint();
+        // Gets the filename if the user selected "OK". Otherwise, returns.
+        File filename;
+        if (fileChooser.showOpenDialog(openDialog) == JFileChooser.APPROVE_OPTION) {
+            filename = fileChooser.getSelectedFile();
 
-                break;
-            }
-            case "New Game":
-                //setDefaultState();
-                //chessGui.repaint();
-                break;
+            System.out.println("File successfully opened: " + filename.getAbsolutePath());
+        } else {
+            System.out.println("The open operation was cancelled.");
+            return null;
+        }
+
+        // Attempts to de-serialize the file as a ChessState object.
+        try {
+            ObjectInputStream objectInputStream = new ObjectInputStream(
+                    new FileInputStream(filename)
+            );
+
+            ChessState chessState = (ChessState) objectInputStream.readObject();
+            objectInputStream.close();
+            System.out.println("The game state was successfully restored!");
+
+            return chessState;
+        } catch (IOException | ClassNotFoundException e) {
+            // If an error occurred, print it to the console and return null.
+            e.printStackTrace();
+            return null;
         }
     }
 }
