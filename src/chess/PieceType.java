@@ -1,11 +1,13 @@
 package chess;
 
+import javax.annotation.Nonnull;
+
 /**
  * Enumeration: PieceType
  * Represents each possible chess piece in the game & its corresponding unicode value.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public enum PieceType {
     // Each piece type is associated with its proper unicode value
@@ -17,7 +19,7 @@ public enum PieceType {
     KING("\u2654");
 
     // A given piece type's unicode value can never change.
-    private final String unicodeValue;
+    @Nonnull private final String unicodeValue;
 
     /**
      * Constructor: PieceType
@@ -25,7 +27,7 @@ public enum PieceType {
      *
      * @param unicodeValue The unicode value to associate with each piece type.
      */
-    PieceType(String unicodeValue) {
+    PieceType(@Nonnull String unicodeValue) {
         this.unicodeValue = unicodeValue;
     }
 
@@ -35,6 +37,7 @@ public enum PieceType {
      *
      * @return The Unicode value, as a String.
      */
+    @Nonnull
     public String getUnicodeValue() {
         return unicodeValue;
     }

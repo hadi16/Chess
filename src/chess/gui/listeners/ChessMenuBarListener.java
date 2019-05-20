@@ -7,6 +7,7 @@ import chess.action.ResetGameAction;
 import chess.action.SaveGameAction;
 import chess.gui.ChessGui;
 
+import javax.annotation.Nonnull;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -16,7 +17,7 @@ import java.awt.event.ActionListener;
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessMenuBarListener extends ChessListener implements ActionListener {
     /**
@@ -25,7 +26,7 @@ public class ChessMenuBarListener extends ChessListener implements ActionListene
      *
      * @param chessGui The reference to the game's GUI.
      */
-    public ChessMenuBarListener(ChessGui chessGui) {
+    public ChessMenuBarListener(@Nonnull ChessGui chessGui) {
         super(chessGui);
     }
 

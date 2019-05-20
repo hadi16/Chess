@@ -1,5 +1,6 @@
 package chess;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -9,20 +10,20 @@ import java.util.Map;
  * Determines which player is in check (if any).
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class CheckTester {
     // The current state
-    private final ChessState chessState;
+    @Nonnull private final ChessState chessState;
 
     // The positions of each player's king (index 0 maps to position for player 0's king, etc.)
-    private final ArrayList<Point> kingPositions = new ArrayList<>();
+    @Nonnull private final ArrayList<Point> kingPositions = new ArrayList<>();
 
     // The positions and pieces of each player's pieces (index 0 maps to positions/pieces for player 0, etc.)
-    private final ArrayList<Map<Point, Piece>> playerPieces = new ArrayList<>();
+    @Nonnull private final ArrayList<Map<Point, Piece>> playerPieces = new ArrayList<>();
 
     // Whether each player is in check (index 0 is true if player 0 is in check, etc.)
-    private final ArrayList<Boolean> playersChecked = new ArrayList<>();
+    @Nonnull private final ArrayList<Boolean> playersChecked = new ArrayList<>();
 
     /**
      * Constructor: CheckTester
@@ -30,13 +31,13 @@ public class CheckTester {
      *
      * @param chessState The current state of the game.
      */
-    public CheckTester(ChessState chessState) {
+    public CheckTester(@Nonnull ChessState chessState) {
         this.chessState = chessState;
 
         // Loops through and adds each player's pieces and king position to the corresponding instance variables.
         for (int playerId = 0; playerId < Constants.NUM_PLAYERS; playerId++) {
             playerPieces.add(chessState.getPlayerPieces(playerId));
-            kingPositions.add(chessState.getKingPosition(playerId));
+            chessState.getKingPosition(playerId).ifPresent(kingPositions::add);
         }
 
         // Loops through and determines which player(s) are in check (if any)

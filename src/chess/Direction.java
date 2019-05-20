@@ -1,5 +1,6 @@
 package chess;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -9,7 +10,7 @@ import java.util.Arrays;
  * (North, South, East, West, Northeast, Northwest, Southeast, and Southwest)
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public enum Direction {
     NORTH(0, -1),
@@ -46,6 +47,7 @@ public enum Direction {
      * @param player The player ID of the pawn (0 or 1).
      * @return The Direction that the pawn can go in for "normal" movements.
      */
+    @Nonnull
     public static Direction getPawnRegularDirection(int player) {
         return (player == 0) ? SOUTH : NORTH;
     }
@@ -57,6 +59,7 @@ public enum Direction {
      * @param player The player ID (0 or 1).
      * @return The list of Directions that the pawn can move when attacking.
      */
+    @Nonnull
     public static ArrayList<Direction> getPawnAttackingDirections(int player) {
         if (player == 0) {
             return new ArrayList<>(Arrays.asList(SOUTHEAST, SOUTHWEST));

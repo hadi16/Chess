@@ -2,6 +2,7 @@ package chess.action;
 
 import chess.PieceType;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -10,11 +11,11 @@ import java.awt.*;
  * Inherits from ChessMoveAction.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class PawnPromotionAction extends ChessMoveAction {
     // The promoted piece type can never be reassigned.
-    private final PieceType promotedPieceType;
+    @Nonnull private final PieceType promotedPieceType;
 
     /**
      * Constructor: PawnPromotionAction
@@ -25,7 +26,7 @@ public class PawnPromotionAction extends ChessMoveAction {
      * @param endPoint The ending position of the pawn.
      * @param promotedPieceType The type of piece that the player wishes to promote the pawn to.
      */
-    public PawnPromotionAction(int playerId, Point startPoint, Point endPoint, PieceType promotedPieceType) {
+    public PawnPromotionAction(int playerId, Point startPoint, Point endPoint, @Nonnull PieceType promotedPieceType) {
         super(playerId, startPoint, endPoint);
 
         this.promotedPieceType = promotedPieceType;
@@ -37,6 +38,7 @@ public class PawnPromotionAction extends ChessMoveAction {
      *
      * @return The piece type to promote the pawn to.
      */
+    @Nonnull
     public PieceType getPromotedPieceType() {
         return promotedPieceType;
     }

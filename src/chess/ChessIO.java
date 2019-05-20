@@ -1,9 +1,11 @@
 package chess;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
+import java.util.Optional;
 
 /**
  * Class: ChessIO
@@ -11,7 +13,7 @@ import java.io.*;
  * Called by the ChessGame class.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessIO {
     /**
@@ -20,6 +22,7 @@ public class ChessIO {
      *
      * @return The JFileChooser instance.
      */
+    @Nonnull
     private JFileChooser getFileChooser() {
         JFileChooser fileChooser = new JFileChooser();
 
@@ -38,7 +41,7 @@ public class ChessIO {
      *
      * @param stateToSave The ChessState to save to a file.
      */
-    public void saveGame(ChessState stateToSave) {
+    public void saveGame(@Nonnull ChessState stateToSave) {
         // Create the save dialog.
         JFrame saveDialog = new JFrame();
         saveDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -88,7 +91,8 @@ public class ChessIO {
      *
      * @return The de-serialized ChessState object.
      */
-    public ChessState openGame() {
+    @Nonnull
+    public Optional<ChessState> openGame() {
         // Create the open dialog.
         JFrame openDialog = new JFrame();
         openDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -105,7 +109,7 @@ public class ChessIO {
             System.out.println("File successfully opened: " + filename.getAbsolutePath());
         } else {
             System.out.println("The open operation was cancelled.");
-            return null;
+            return Optional.empty();
         }
 
         // Attempts to de-serialize the file as a ChessState object.
@@ -118,11 +122,11 @@ public class ChessIO {
             objectInputStream.close();
             System.out.println("The game state was successfully restored!");
 
-            return chessState;
+            return Optional.of(chessState);
         } catch (IOException | ClassNotFoundException e) {
             // If an error occurred, print it to the console and return null.
             e.printStackTrace();
-            return null;
+            return Optional.empty();
         }
     }
 }

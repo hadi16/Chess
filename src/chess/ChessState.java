@@ -4,21 +4,23 @@ import chess.action.ChessMoveAction;
 import chess.action.PawnPromotionAction;
 import chess.info.ChessGameInfo;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class: ChessState
  * Represents a state in the chess game.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessState extends ChessGameInfo implements Serializable {
-    // The board, current turn, and player in check
-    private Map<Point, Piece> board = new HashMap<>();
+    @Nonnull private Map<Point, Piece> board = new HashMap<>();
+
     private int currentTurn;
     private int checkedPlayer; // The player ID of the checked player (or -1 if neither are in check).
 
@@ -36,7 +38,7 @@ public class ChessState extends ChessGameInfo implements Serializable {
      *
      * @param originalState The ChessState to copy.
      */
-    public ChessState(ChessState originalState) {
+    public ChessState(@Nonnull ChessState originalState) {
         board = originalState.getBoardDeepCopy();
         currentTurn = originalState.currentTurn;
         checkedPlayer = originalState.checkedPlayer;
@@ -87,7 +89,8 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param moveAction The move to play in the game.
      * @return The next state in the game after the given move is played.
      */
-    public ChessState getNextState(ChessMoveAction moveAction) {
+    @Nonnull
+    public ChessState getNextState(@Nonnull ChessMoveAction moveAction) {
         // Get the starting and ending position for the piece.
         Point startPosition = moveAction.getStartPosition();
         Point endPosition = moveAction.getEndPosition();
@@ -95,18 +98,19 @@ public class ChessState extends ChessGameInfo implements Serializable {
         // Gets a new ChessState to return (as a deep copy).
         ChessState nextState = new ChessState(this);
 
-        // Get the piece to move and set it as moved.
-        Piece pieceToMove = nextState.removeAndReturnPieceAtPosition(startPosition);
-        pieceToMove.setMoved(true);
+        // Get the piece to move and sets it as moved.
+        nextState.removeAndReturnPieceAtPosition(startPosition).ifPresent(pieceToMove -> {
+            pieceToMove.setMoved(true);
 
-        // If the action involved pawn promotion, update the piece type.
-        if (moveAction instanceof PawnPromotionAction) {
-            PawnPromotionAction pawnPromotionAction = (PawnPromotionAction) moveAction;
-            pieceToMove.setPieceType(pawnPromotionAction.getPromotedPieceType());
-        }
+            // If the action involved pawn promotion, update the piece type.
+            if (moveAction instanceof PawnPromotionAction) {
+                PawnPromotionAction pawnPromotionAction = (PawnPromotionAction) moveAction;
+                pieceToMove.setPieceType(pawnPromotionAction.getPromotedPieceType());
+            }
 
-        // Set the piece in the master state.
-        nextState.setBoardAtPosition(endPosition, pieceToMove);
+            // Set the piece in the master state.
+            nextState.setBoardAtPosition(endPosition, pieceToMove);
+        });
 
         // Change the turn.
         nextState.changeTurn();
@@ -125,10 +129,9 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param position The position in the board to set.
      * @param piece The piece to set the board's position to.
      */
-    private void setBoardAtPosition(Point position, Piece piece) {
-        // The position or piece in the board can never be null
-        // Also, position must always be in bounds.
-        if (position == null || piece == null || !Helpers.positionInBounds(position)) {
+    private void setBoardAtPosition(@Nonnull Point position, @Nonnull Piece piece) {
+        // Position must always be in bounds.
+        if (!Helpers.positionInBounds(position)) {
             return;
         }
 
@@ -142,8 +145,14 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param position The position to remove the piece at.
      * @return The Piece at this position (or null).
      */
-    private Piece removeAndReturnPieceAtPosition(Point position) {
-        return board.remove(position);
+    @Nonnull
+    private Optional<Piece> removeAndReturnPieceAtPosition(@Nonnull Point position) {
+        Piece removedPiece = board.remove(position);
+        if (removedPiece == null) {
+            return Optional.empty();
+        } else {
+            return Optional.of(removedPiece);
+        }
     }
 
     /**
@@ -172,7 +181,7 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param position The position to check.
      * @return true if the position is in the board (otherwise false).
      */
-    public boolean positionInBoard(Point position) {
+    public boolean positionInBoard(@Nonnull Point position) {
         return board.containsKey(position);
     }
 
@@ -183,15 +192,18 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param position The position to query.
      * @return The piece at this position.
      */
-    public Piece getPieceAtPosition(Point position) {
+    @Nonnull
+    public Optional<Piece> getPieceAtPosition(@Nonnull Point position) {
         Piece pieceToGet = board.get(position);
         // Required, since using copy constructor below.
         if (pieceToGet == null) {
-            return null;
+            return Optional.empty();
         }
 
         // Uses Piece's copy constructor to get deep copy.
-        return new Piece(pieceToGet);
+        return Optional.of(
+                new Piece(pieceToGet)
+        );
     }
 
     /**
@@ -200,6 +212,7 @@ public class ChessState extends ChessGameInfo implements Serializable {
      *
      * @return A deep copy of the board.
      */
+    @Nonnull
     public Map<Point, Piece> getBoardDeepCopy() {
         Map<Point, Piece> boardCopy = new HashMap<>();
 
@@ -221,16 +234,19 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param playerId The ID of the player (0 or 1).
      * @return A deep copy of the position of the player's king.
      */
-    public Point getKingPosition(int playerId) {
+    @Nonnull
+    public Optional<Point> getKingPosition(int playerId) {
         // Loops through the whole board, finds the player's king,
         // and returns a deep copy of the king's position.
         for (Map.Entry<Point, Piece> entry : board.entrySet()) {
             Piece piece = entry.getValue();
             if (piece.getPieceType() == PieceType.KING && piece.getPlayer() == playerId) {
-                return new Point(entry.getKey());
+                return Optional.of(
+                        new Point(entry.getKey())
+                );
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -240,6 +256,7 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param playerId The player ID to check.
      * @return A HashMap mapping each position of the player's pieces to the Piece.
      */
+    @Nonnull
     public Map<Point, Piece> getPlayerPieces(int playerId) {
         Map<Point, Piece> playerPieces = new HashMap<>();
 

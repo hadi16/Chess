@@ -9,34 +9,37 @@ import chess.info.ChessGameInfo;
 import chess.info.IllegalMoveInfo;
 import chess.info.NotYourTurnInfo;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Class: ChessGui
  * The GUI in the game.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessGui extends JPanel {
-    // The reference to ChessGame (only assigned in the constructor).
-    private final ChessGame chessGame;
+    // The reference to ChessGame & JFrame (only assigned once).
+    @Nonnull private final ChessGame chessGame;
+    @Nonnull private final JFrame chessGameFrame = new JFrame("Chess");
 
     // Maps each Point to a list of legal end points.
-    private Map<Point, ArrayList<Point>> currentPlayerLegalMoves = new HashMap<>();
+    @Nonnull private Map<Point, ArrayList<Point>> currentPlayerLegalMoves = new HashMap<>();
 
-    // The chess game's frame and current state.
-    private JFrame chessGameFrame;
-    private ChessState chessState;
+    // The current state of the game.
+    @Nonnull private ChessState chessState;
 
     // The clicked point (for moving pieces) and hover point
     // (for displaying text while the user hovers)
-    private Point clickedPoint;
-    private Point hoverPoint;
+    @Nullable private Point clickedPoint;
+    @Nullable private Point hoverPoint;
 
     // The current scaling factor of the game.
     private int scaleDim;
@@ -47,8 +50,9 @@ public class ChessGui extends JPanel {
      *
      * @param chessGame The reference to ChessGame.
      */
-    public ChessGui(ChessGame chessGame) {
+    public ChessGui(@Nonnull ChessGame chessGame, @Nonnull ChessState chessState) {
         this.chessGame = chessGame;
+        this.chessState = chessState;
 
         // Add the mouse listeners (for clicking and hovering)
         addMouseListener(new ChessMouseListener(this));
@@ -65,7 +69,6 @@ public class ChessGui extends JPanel {
      */
     private void initChessGameFrame() {
         // Sets some basic qualities of the frame.
-        chessGameFrame = new JFrame("ChessGame");
         chessGameFrame.add(this);
         chessGameFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         chessGameFrame.setSize(1000, 1000);
@@ -80,6 +83,20 @@ public class ChessGui extends JPanel {
         chessGameFrame.setVisible(true);
     }
 
+    public void updateCurrentPlayerLegalMoves() {
+        // Resets the legal end points for the GUI.
+        currentPlayerLegalMoves = new HashMap<>();
+        Map<Point, Piece> currentPlayerPieces = chessState.getPlayerPieces(chessState.getCurrentTurn());
+        for (Map.Entry<Point, Piece> entry : currentPlayerPieces.entrySet()) {
+            Point point = entry.getKey();
+            ChessRules chessRules = new ChessRules(point, chessState);
+            currentPlayerLegalMoves.put(
+                    point,
+                    chessRules.getLegalEndPointsForPosition()
+            );
+        }
+    }
+
     /**
      * Method: receiveInfo
      * Receives information from the game about illegal moves, etc.
@@ -87,7 +104,7 @@ public class ChessGui extends JPanel {
      *
      * @param info The info to receive (as a ChessGameInfo object).
      */
-    public void receiveInfo(ChessGameInfo info) {
+    public void receiveInfo(@Nonnull ChessGameInfo info) {
         // An illegal move was attempted.
         if (info instanceof IllegalMoveInfo) {
             System.err.println("You attempted to make an illegal move!");
@@ -107,17 +124,8 @@ public class ChessGui extends JPanel {
 
         chessState = (ChessState) info;
 
-        // Resets the legal end points for the GUI.
-        currentPlayerLegalMoves = new HashMap<>();
-        Map<Point, Piece> currentPlayerPieces = chessState.getPlayerPieces(chessState.getCurrentTurn());
-        for (Map.Entry<Point, Piece> entry : currentPlayerPieces.entrySet()) {
-            Point point = entry.getKey();
-            ChessRules chessRules = new ChessRules(point, chessState);
-            currentPlayerLegalMoves.put(
-                    point,
-                    chessRules.getLegalEndPointsForPosition()
-            );
-        }
+        // Update the current player's legal moves.
+        updateCurrentPlayerLegalMoves();
 
         // Will show which player is in check (if applicable).
         displayCheckedPlayerMessage();
@@ -152,7 +160,7 @@ public class ChessGui extends JPanel {
      *
      * @param actionToSend The action to send to the game.
      */
-    public void sendActionToGame(ChessAction actionToSend) {
+    public void sendActionToGame(@Nonnull ChessAction actionToSend) {
         chessGame.receiveAction(actionToSend);
     }
 
@@ -214,7 +222,7 @@ public class ChessGui extends JPanel {
      * @param pieceSquare The square to draw the hover text on.
      * @param piece The piece that is occupied by that square (used to get the text to draw).
      */
-    private void drawHoverText(Graphics canvas, Rectangle pieceSquare, Piece piece) {
+    private void drawHoverText(Graphics canvas, @Nonnull Rectangle pieceSquare, @Nonnull Piece piece) {
         // Set the font and color of the font.
         canvas.setFont(new Font("Arial", Font.BOLD, (scaleDim / 4)));
         canvas.setColor(piece.getPlayer() == 0 ? Color.white : Color.black);
@@ -326,14 +334,17 @@ public class ChessGui extends JPanel {
      *
      * @return A deep copy of the clicked Point.
      */
-    public Point getClickedPoint() {
+    @Nonnull
+    public Optional<Point> getClickedPoint() {
         // Necessary, since using the copy constructor below.
         if (clickedPoint == null) {
-            return null;
+            return Optional.empty();
         }
 
         // Uses Point's copy constructor.
-        return new Point(clickedPoint);
+        return Optional.of(
+                new Point(clickedPoint)
+        );
     }
 
     /**
@@ -342,7 +353,7 @@ public class ChessGui extends JPanel {
      *
      * @param clickedPoint The Point to set the currently clicked Point to.
      */
-    public void setClickedPoint(Point clickedPoint) {
+    public void setClickedPoint(@Nullable Point clickedPoint) {
         // Necessary, since using the copy constructor below.
         if (clickedPoint == null) {
             this.clickedPoint = null;
@@ -359,7 +370,7 @@ public class ChessGui extends JPanel {
      *
      * @param hoverPoint The Point to set the currently hovered over Point to.
      */
-    public void setHoverPoint(Point hoverPoint) {
+    public void setHoverPoint(@Nullable Point hoverPoint) {
         // Necessary, since using the copy constructor below.
         if (hoverPoint == null) {
             this.hoverPoint = null;
@@ -376,12 +387,8 @@ public class ChessGui extends JPanel {
      *
      * @return A deep copy of the JFrame dimensions.
      */
+    @Nonnull
     public Rectangle getGameFrameBounds() {
-        // Necessary, since using the copy constructor below.
-        if (chessGameFrame == null) {
-            return null;
-        }
-
         // Uses Rectangle's copy constructor.
         return new Rectangle(chessGameFrame.getBounds());
     }
@@ -392,12 +399,8 @@ public class ChessGui extends JPanel {
      *
      * @return A copy of the chess state.
      */
+    @Nonnull
     public ChessState getChessState() {
-        // Necessary, since using the copy constructor below.
-        if (chessState == null) {
-            return null;
-        }
-
         // Uses ChessState's copy constructor.
         return new ChessState(chessState);
     }

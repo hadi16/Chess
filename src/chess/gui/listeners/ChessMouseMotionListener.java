@@ -4,6 +4,7 @@ import chess.ChessState;
 import chess.Helpers;
 import chess.gui.ChessGui;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
@@ -14,7 +15,7 @@ import java.awt.event.MouseMotionListener;
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessMouseMotionListener extends ChessListener implements MouseMotionListener {
     /**
@@ -23,7 +24,7 @@ public class ChessMouseMotionListener extends ChessListener implements MouseMoti
      *
      * @param chessGui The reference to the game's GUI.
      */
-    public ChessMouseMotionListener(ChessGui chessGui) {
+    public ChessMouseMotionListener(@Nonnull ChessGui chessGui) {
         super(chessGui);
     }
 
@@ -37,15 +38,14 @@ public class ChessMouseMotionListener extends ChessListener implements MouseMoti
     public void mouseMoved(MouseEvent mouseEvent) {
         // Uses the x & y positions of the mouse w/ the scaleDim
         // to calculate the position on the board where the user's mouse is.
-        Point pointClicked = Helpers.getValidPointOrNull(
-                new Point(mouseEvent.getX(), mouseEvent.getY()),
-                chessGui.getScaleDim()
-        );
-
-        // Determines if a piece is there & sets the hover point accordingly.
-        ChessState chessState = chessGui.getChessState();
-        Point hoverPoint = chessState.positionInBoard(pointClicked) ? pointClicked : null;
-        chessGui.setHoverPoint(hoverPoint);
+        Helpers.getValidPointOrEmpty(
+                new Point(mouseEvent.getX(), mouseEvent.getY()), chessGui.getScaleDim()
+        ).ifPresent(pointClicked -> {
+            // Determines if a piece is there & sets the hover point accordingly.
+            ChessState chessState = chessGui.getChessState();
+            Point hoverPoint = chessState.positionInBoard(pointClicked) ? pointClicked : null;
+            chessGui.setHoverPoint(hoverPoint);
+        });
         chessGui.repaint();
     }
 

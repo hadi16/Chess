@@ -2,16 +2,18 @@ package chess.gui.listeners;
 
 import chess.gui.ChessGui;
 
+import javax.annotation.Nonnull;
+
 /**
  * Abstract Class: ChessListener
  * The base class for all listeners in the game.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public abstract class ChessListener {
     // All listeners need access to the chess game's GUI.
-    protected final ChessGui chessGui;
+    @Nonnull protected final ChessGui chessGui;
 
     /**
      * Protected Constructor: ChessListener
@@ -20,7 +22,7 @@ public abstract class ChessListener {
      *
      * @param chessGui The reference to the GUI of the chess game.
      */
-    protected ChessListener(ChessGui chessGui) {
+    protected ChessListener(@Nonnull ChessGui chessGui) {
         this.chessGui = chessGui;
     }
 }

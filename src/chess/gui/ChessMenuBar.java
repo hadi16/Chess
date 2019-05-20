@@ -3,6 +3,7 @@ package chess.gui;
 import chess.Constants;
 import chess.gui.listeners.ChessMenuBarListener;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 
 /**
@@ -10,10 +11,10 @@ import javax.swing.*;
  * Creates the menu bar for the game's GUI.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessMenuBar {
-    private final JMenuBar menuBar;
+    @Nonnull private final JMenuBar menuBar;
 
     /**
      * Constructor: ChessMenuBar
@@ -21,7 +22,7 @@ public class ChessMenuBar {
      *
      * @param mainGui The reference to the game's main GUI.
      */
-    public ChessMenuBar(ChessGui mainGui) {
+    public ChessMenuBar(@Nonnull ChessGui mainGui) {
         // Required for macOS menu bar functionality
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
@@ -55,6 +56,7 @@ public class ChessMenuBar {
      *
      * @return The JMenuBar reference.
      */
+    @Nonnull
     public JMenuBar getMenuBar() {
         return menuBar;
     }

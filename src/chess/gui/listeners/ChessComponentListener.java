@@ -3,6 +3,7 @@ package chess.gui.listeners;
 import chess.Constants;
 import chess.gui.ChessGui;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -13,7 +14,7 @@ import java.awt.event.ComponentListener;
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessComponentListener extends ChessListener implements ComponentListener {
     /**
@@ -22,7 +23,7 @@ public class ChessComponentListener extends ChessListener implements ComponentLi
      *
      * @param chessGui The reference to the game's GUI.
      */
-    public ChessComponentListener(ChessGui chessGui) {
+    public ChessComponentListener(@Nonnull ChessGui chessGui) {
         super(chessGui);
     }
 

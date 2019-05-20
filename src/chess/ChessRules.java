@@ -1,5 +1,6 @@
 package chess;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
@@ -11,14 +12,14 @@ import java.util.Map;
  * Note: en passant & castling are not supported yet.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessRules {
     // The starting position to check (never reassigned).
-    private final Point startPosition;
+    @Nonnull private final Point startPosition;
 
     // The current board (never reassigned).
-    private final Map<Point, Piece> board;
+    @Nonnull private final Map<Point, Piece> board;
 
     /**
      * Constructor: ChessRules
@@ -27,7 +28,7 @@ public class ChessRules {
      * @param startPosition The start position to check.
      * @param currentState The current state of the game.
      */
-    public ChessRules(Point startPosition, ChessState currentState) {
+    public ChessRules(@Nonnull Point startPosition, @Nonnull ChessState currentState) {
         this.startPosition = startPosition;
         board = currentState.getBoardDeepCopy();
     }
@@ -39,7 +40,7 @@ public class ChessRules {
      * @param endPosition The end position to check.
      * @return true if the move doesn't constitute friendly fire (otherwise false).
      */
-    private boolean notFriendlyFire(Point endPosition) {
+    private boolean notFriendlyFire(@Nonnull Point endPosition) {
         // If the board doesn't contain the position,
         // the move doesn't constitute friendly fire.
         if (!board.containsKey(endPosition)) {
@@ -58,7 +59,8 @@ public class ChessRules {
      * @param maxPoints Maximum amount of legal end points that can be in this direction (especially useful for king)
      * @return The list of all legal end points in the direction.
      */
-    private ArrayList<Point> getLegalEndPointsInDirection(Direction direction, int maxPoints) {
+    @Nonnull
+    private ArrayList<Point> getLegalEndPointsInDirection(@Nonnull Direction direction, int maxPoints) {
         // Add the x & y value to the current position's x & y and construct as a new position.
         Point currentPosition = new Point(
                 startPosition.x + direction.getX(),
@@ -100,7 +102,8 @@ public class ChessRules {
      * @param maxPointsPerDirection The maximum amount of legal end points each direction can have.
      * @return A list of all the legal end points.
      */
-    private ArrayList<Point> getAllLegalEndPointsForDirections(ArrayList<Direction> directions,
+    @Nonnull
+    private ArrayList<Point> getAllLegalEndPointsForDirections(@Nonnull ArrayList<Direction> directions,
                                                                int maxPointsPerDirection) {
         ArrayList<Point> legalEndPoints = new ArrayList<>();
         for (Direction direction : directions) {
@@ -117,7 +120,8 @@ public class ChessRules {
      * @param directions The directions to check for legal end points.
      * @return A list of all the legal end points for the given position.
      */
-    private ArrayList<Point> getAllLegalEndPointsForDirections(ArrayList<Direction> directions) {
+    @Nonnull
+    private ArrayList<Point> getAllLegalEndPointsForDirections(@Nonnull ArrayList<Direction> directions) {
         return getAllLegalEndPointsForDirections(directions, Constants.BOARD_WIDTH - 1);
     }
 
@@ -127,6 +131,7 @@ public class ChessRules {
      *
      * @return The list of all the legal end positions for the knight.
      */
+    @Nonnull
     private ArrayList<Point> getKnightLegalEndPoints() {
         // A knight can only move in an "L" shape (eight predefined directions).
         final Point[] ALL_KNIGHT_DIRECTIONS = {
@@ -159,6 +164,7 @@ public class ChessRules {
      *
      * @return The list of legal moves for the pawn.
      */
+    @Nonnull
     private ArrayList<Point> getPawnLegalEndPoints() {
         // Create the list of legal end points to return & get the pawn.
         ArrayList<Point> pawnLegalEndPoints = new ArrayList<>();
@@ -211,6 +217,7 @@ public class ChessRules {
      *
      * @return A list of Point objects representing all the legal end points for the piece to move.
      */
+    @Nonnull
     public ArrayList<Point> getLegalEndPointsForPosition() {
         // If the position is empty, it can clearly go nowhere (empty list).
         if (!board.containsKey(startPosition)) {
@@ -250,7 +257,7 @@ public class ChessRules {
      * @param endPosition The end position to check.
      * @return true if the move is valid (otherwise false).
      */
-    public boolean isLegalMove(Point endPosition) {
+    public boolean isLegalMove(@Nonnull Point endPosition) {
         // Get the list of all legal end points and determine if the point is in the list.
         ArrayList<Point> legalEndPoints = getLegalEndPointsForPosition();
         return legalEndPoints.contains(endPosition);
@@ -263,7 +270,7 @@ public class ChessRules {
      * @param endPosition The end position to check.
      * @return true if the pawn can be promoted (otherwise false).
      */
-    public boolean canPromotePawn(Point endPosition) {
+    public boolean canPromotePawn(@Nonnull Point endPosition) {
         // It must be a legal move.
         if (!isLegalMove(endPosition)) {
             return false;

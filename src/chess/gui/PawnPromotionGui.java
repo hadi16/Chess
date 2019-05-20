@@ -2,6 +2,7 @@ package chess.gui;
 
 import chess.PieceType;
 
+import javax.annotation.Nonnull;
 import javax.swing.*;
 
 /**
@@ -9,11 +10,11 @@ import javax.swing.*;
  * Allows the user to select which piece type to promote their pawn to.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class PawnPromotionGui {
     // The selected piece type is only assigned once.
-    private final PieceType selectedPieceType;
+    @Nonnull private final PieceType selectedPieceType;
 
     /**
      * Constructor: PawnPromotionGui
@@ -29,6 +30,7 @@ public class PawnPromotionGui {
      *
      * @return The selected piece type.
      */
+    @Nonnull
     private PieceType showSelectionGuiAndReturnResult() {
         // Constant that is never changed (declared as final)
         final PieceType[] PROMOTION_OPTIONS = {
@@ -58,6 +60,7 @@ public class PawnPromotionGui {
      *
      * @return The selected piece type (instance of PieceType enum).
      */
+    @Nonnull
     public PieceType getSelectedPieceType() {
         return selectedPieceType;
     }

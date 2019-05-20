@@ -1,5 +1,6 @@
 package chess.action;
 
+import javax.annotation.Nonnull;
 import java.awt.*;
 
 /**
@@ -8,14 +9,13 @@ import java.awt.*;
  * Inherits from ChessAction.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessMoveAction extends ChessAction {
-    // The player ID, start position, and
-    // end position of a move (never reassigned)
     private final int playerId;
-    private final Point startPosition;
-    private final Point endPosition;
+
+    @Nonnull private final Point startPosition;
+    @Nonnull private final Point endPosition;
 
     /**
      * Constructor: ChessMoveAction
@@ -25,7 +25,7 @@ public class ChessMoveAction extends ChessAction {
      * @param startPosition The current position of the piece.
      * @param endPosition The position of the piece to move to.
      */
-    public ChessMoveAction(int playerId, Point startPosition, Point endPosition) {
+    public ChessMoveAction(int playerId, @Nonnull Point startPosition, @Nonnull Point endPosition) {
         this.playerId = playerId;
 
         // Uses Point class copy constructor
@@ -45,6 +45,7 @@ public class ChessMoveAction extends ChessAction {
      * Getter: getStartPosition
      * @return The current position of the piece as a Point (deep copy).
      */
+    @Nonnull
     public Point getStartPosition() {
         return new Point(startPosition);
     }
@@ -53,6 +54,7 @@ public class ChessMoveAction extends ChessAction {
      * Getter: getEndPosition
      * @return The ending position of the piece as a Point (deep copy).
      */
+    @Nonnull
     public Point getEndPosition() {
         return new Point(endPosition);
     }

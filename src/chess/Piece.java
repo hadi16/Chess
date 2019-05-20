@@ -1,5 +1,6 @@
 package chess;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 
 /**
@@ -7,15 +8,13 @@ import java.io.Serializable;
  * Represents a chess piece in the game.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class Piece implements Serializable {
-    // The piece's player (can never be reassigned).
     private final int player;
-
-    // The piece type and whether the piece has moved
-    private PieceType pieceType; // Can only change with pawn promotion.
     private boolean moved;
+
+    @Nonnull private PieceType pieceType; // Can only change with pawn promotion.
 
     /**
      * Constructor: Piece
@@ -24,7 +23,7 @@ public class Piece implements Serializable {
      * @param pieceType The piece type (as an instance of the PieceType enumeration).
      * @param player The player ID for the piece (0 or 1).
      */
-    public Piece(PieceType pieceType, int player) {
+    public Piece(@Nonnull PieceType pieceType, int player) {
         this.pieceType = pieceType;
         this.player = player;
     }
@@ -35,7 +34,7 @@ public class Piece implements Serializable {
      *
      * @param piece The chess piece to copy.
      */
-    public Piece(Piece piece) {
+    public Piece(@Nonnull Piece piece) {
         pieceType = piece.pieceType;
         player = piece.player;
         moved = piece.moved;
@@ -57,6 +56,7 @@ public class Piece implements Serializable {
      *
      * @return The piece's type (as an instance of the PieceType enumeration).
      */
+    @Nonnull
     public PieceType getPieceType() {
         return pieceType;
     }
@@ -67,7 +67,7 @@ public class Piece implements Serializable {
      *
      * @param pieceType The piece type to set the piece to.
      */
-    public void setPieceType(PieceType pieceType) {
+    public void setPieceType(@Nonnull PieceType pieceType) {
         // The piece type can only be changed
         // for a pawn (pawn promotion).
         if (this.pieceType != PieceType.PAWN) {

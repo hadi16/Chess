@@ -5,21 +5,23 @@ import chess.gui.ChessGui;
 import chess.info.IllegalMoveInfo;
 import chess.info.NotYourTurnInfo;
 
+import javax.annotation.Nonnull;
+
 /**
  * Class: ChessGame
  * The local chess game. Where the program is executed from.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version May 2019
  */
 public class ChessGame {
     // The references to the GUI and IO for the program (never reassigned).
-    private final ChessGui chessGui = new ChessGui(this);
-    private final ChessIO chessIO = new ChessIO();
+    @Nonnull private final ChessGui chessGui;
+    @Nonnull private final ChessIO chessIO = new ChessIO();
 
     // The master state for the chess game
     // (can be reassigned by open and reset game functionality)
-    private ChessState chessState = new ChessState();
+    @Nonnull private ChessState chessState;
 
     /**
      * Static Method: main
@@ -36,8 +38,9 @@ public class ChessGame {
      * Creates a new chess game.
      */
     private ChessGame() {
-        // Send this initial state to the ChessGui object.
-        sendUpdatedStateToGui();
+        chessState = new ChessState();
+        chessGui = new ChessGui(this, chessState);
+        chessGui.updateCurrentPlayerLegalMoves();
     }
 
     /**
@@ -66,7 +69,7 @@ public class ChessGame {
      *
      * @param action The ChessAction to perform.
      */
-    public void receiveAction(ChessAction action) {
+    public void receiveAction(@Nonnull ChessAction action) {
         // If the user clicked the New, Open, or Save menu items.
         if (action instanceof ChessMenuAction) {
             // Case 1: The "New" menu item was clicked (reset the game).
@@ -74,10 +77,9 @@ public class ChessGame {
                 chessState = new ChessState();
             // Case 2: The "Open" menu item was clicked (trigger the open dialog).
             } else if (action instanceof OpenGameAction) {
-                ChessState stateToSet = chessIO.openGame();
-                if (stateToSet != null) {
-                    chessState = stateToSet;
-                }
+                chessIO.openGame().ifPresent(
+                        stateToSet -> chessState = stateToSet
+                );
             // Case 3: The "Save" menu item was clicked (trigger the save dialog).
             } else if (action instanceof SaveGameAction) {
                 chessIO.saveGame(chessState);
