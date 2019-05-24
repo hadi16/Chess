@@ -5,6 +5,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.io.*;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -42,6 +43,8 @@ public class ChessIO {
      * @param stateToSave The ChessState to save to a file.
      */
     public void saveGame(@Nonnull ChessState stateToSave) {
+        Objects.requireNonNull(stateToSave);
+
         // Create the save dialog.
         JFrame saveDialog = new JFrame();
         saveDialog.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);

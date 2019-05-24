@@ -1,6 +1,7 @@
 package chess;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Enumeration: PieceType
@@ -28,6 +29,7 @@ public enum PieceType {
      * @param unicodeValue The unicode value to associate with each piece type.
      */
     PieceType(@Nonnull String unicodeValue) {
+        Objects.requireNonNull(unicodeValue);
         this.unicodeValue = unicodeValue;
     }
 

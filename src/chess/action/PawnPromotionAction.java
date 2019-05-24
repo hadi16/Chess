@@ -4,6 +4,7 @@ import chess.PieceType;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Class: PawnPromotionAction
@@ -29,6 +30,7 @@ public class PawnPromotionAction extends ChessMoveAction {
     public PawnPromotionAction(int playerId, Point startPoint, Point endPoint, @Nonnull PieceType promotedPieceType) {
         super(playerId, startPoint, endPoint);
 
+        Objects.requireNonNull(promotedPieceType);
         this.promotedPieceType = promotedPieceType;
     }
 

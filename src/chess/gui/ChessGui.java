@@ -13,10 +13,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Class: ChessGui
@@ -51,6 +48,9 @@ public class ChessGui extends JPanel {
      * @param chessGame The reference to ChessGame.
      */
     public ChessGui(@Nonnull ChessGame chessGame, @Nonnull ChessState chessState) {
+        Objects.requireNonNull(chessGame);
+        Objects.requireNonNull(chessState);
+
         this.chessGame = chessGame;
         this.chessState = chessState;
 
@@ -105,6 +105,8 @@ public class ChessGui extends JPanel {
      * @param info The info to receive (as a ChessGameInfo object).
      */
     public void receiveInfo(@Nonnull ChessGameInfo info) {
+        Objects.requireNonNull(info);
+
         // An illegal move was attempted.
         if (info instanceof IllegalMoveInfo) {
             System.err.println("You attempted to make an illegal move!");
@@ -161,6 +163,8 @@ public class ChessGui extends JPanel {
      * @param actionToSend The action to send to the game.
      */
     public void sendActionToGame(@Nonnull ChessAction actionToSend) {
+        Objects.requireNonNull(actionToSend);
+
         chessGame.receiveAction(actionToSend);
     }
 
@@ -170,7 +174,9 @@ public class ChessGui extends JPanel {
      *
      * @param canvas The Graphics reference.
      */
-    private void drawLegalMoves(Graphics canvas) {
+    private void drawLegalMoves(@Nonnull Graphics canvas) {
+        Objects.requireNonNull(canvas);
+
         // Check for legal points to draw.
         ArrayList<Point> legalPoints = currentPlayerLegalMoves.get(clickedPoint);
         if (legalPoints == null) {
@@ -196,7 +202,9 @@ public class ChessGui extends JPanel {
      *
      * @param canvas The Graphics reference.
      */
-    private void drawChessBoardWithSelectedSquare(Graphics canvas) {
+    private void drawChessBoardWithSelectedSquare(@Nonnull Graphics canvas) {
+        Objects.requireNonNull(canvas);
+
         for (int i = 0; i < Constants.BOARD_WIDTH; i++) {
             for (int j = 0; j < Constants.BOARD_WIDTH; j++) {
                 // Sets the color of the square to draw.
@@ -222,7 +230,11 @@ public class ChessGui extends JPanel {
      * @param pieceSquare The square to draw the hover text on.
      * @param piece The piece that is occupied by that square (used to get the text to draw).
      */
-    private void drawHoverText(Graphics canvas, @Nonnull Rectangle pieceSquare, @Nonnull Piece piece) {
+    private void drawHoverText(@Nonnull Graphics canvas, @Nonnull Rectangle pieceSquare, @Nonnull Piece piece) {
+        Objects.requireNonNull(canvas);
+        Objects.requireNonNull(pieceSquare);
+        Objects.requireNonNull(piece);
+
         // Set the font and color of the font.
         canvas.setFont(new Font("Arial", Font.BOLD, (scaleDim / 4)));
         canvas.setColor(piece.getPlayer() == 0 ? Color.white : Color.black);
@@ -248,7 +260,9 @@ public class ChessGui extends JPanel {
      *
      * @param canvas The Graphics reference.
      */
-    private void drawPieces(Graphics canvas) {
+    private void drawPieces(@Nonnull Graphics canvas) {
+        Objects.requireNonNull(canvas);
+
         // Needed for getting the FontMetrics object.
         Graphics2D graphics2D = (Graphics2D) canvas;
 

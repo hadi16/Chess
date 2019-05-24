@@ -2,6 +2,7 @@ package chess;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -20,6 +21,8 @@ public class Helpers {
      * @return true if a valid point (otherwise false)
      */
     public static boolean positionInBounds(@Nonnull Point position) {
+        Objects.requireNonNull(position);
+
         return position.x >= 0 && position.x < Constants.BOARD_WIDTH &&
                position.y >= 0 && position.y < Constants.BOARD_WIDTH;
     }
@@ -35,6 +38,8 @@ public class Helpers {
      */
     @Nonnull
     public static Optional<Point> getValidPointOrEmpty(@Nonnull Point mousePosition, int scaleDim) {
+        Objects.requireNonNull(mousePosition);
+
         // Use the scaling factor to get the corresponding point on the board.
         Point pointClicked = new Point(
                 mousePosition.x / scaleDim, mousePosition.y / scaleDim

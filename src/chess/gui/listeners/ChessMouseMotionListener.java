@@ -53,6 +53,5 @@ public class ChessMouseMotionListener extends ChessListener implements MouseMoti
      * This method is required when implementing MouseMotionListener, but is not used.
      */
     @Override
-    public void mouseDragged(MouseEvent e) {
-    }
+    public void mouseDragged(MouseEvent e) { }
 }

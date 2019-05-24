@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class: ChessRules
@@ -29,6 +30,9 @@ public class ChessRules {
      * @param currentState The current state of the game.
      */
     public ChessRules(@Nonnull Point startPosition, @Nonnull ChessState currentState) {
+        Objects.requireNonNull(startPosition);
+        Objects.requireNonNull(currentState);
+
         this.startPosition = startPosition;
         board = currentState.getBoardDeepCopy();
     }
@@ -41,6 +45,8 @@ public class ChessRules {
      * @return true if the move doesn't constitute friendly fire (otherwise false).
      */
     private boolean notFriendlyFire(@Nonnull Point endPosition) {
+        Objects.requireNonNull(endPosition);
+
         // If the board doesn't contain the position,
         // the move doesn't constitute friendly fire.
         if (!board.containsKey(endPosition)) {
@@ -61,6 +67,8 @@ public class ChessRules {
      */
     @Nonnull
     private ArrayList<Point> getLegalEndPointsInDirection(@Nonnull Direction direction, int maxPoints) {
+        Objects.requireNonNull(direction);
+
         // Add the x & y value to the current position's x & y and construct as a new position.
         Point currentPosition = new Point(
                 startPosition.x + direction.getX(),
@@ -105,6 +113,8 @@ public class ChessRules {
     @Nonnull
     private ArrayList<Point> getAllLegalEndPointsForDirections(@Nonnull ArrayList<Direction> directions,
                                                                int maxPointsPerDirection) {
+        Objects.requireNonNull(directions);
+
         ArrayList<Point> legalEndPoints = new ArrayList<>();
         for (Direction direction : directions) {
             legalEndPoints.addAll(getLegalEndPointsInDirection(direction, maxPointsPerDirection));
@@ -122,6 +132,7 @@ public class ChessRules {
      */
     @Nonnull
     private ArrayList<Point> getAllLegalEndPointsForDirections(@Nonnull ArrayList<Direction> directions) {
+        Objects.requireNonNull(directions);
         return getAllLegalEndPointsForDirections(directions, Constants.BOARD_WIDTH - 1);
     }
 
@@ -258,6 +269,8 @@ public class ChessRules {
      * @return true if the move is valid (otherwise false).
      */
     public boolean isLegalMove(@Nonnull Point endPosition) {
+        Objects.requireNonNull(endPosition);
+
         // Get the list of all legal end points and determine if the point is in the list.
         ArrayList<Point> legalEndPoints = getLegalEndPointsForPosition();
         return legalEndPoints.contains(endPosition);
@@ -271,6 +284,8 @@ public class ChessRules {
      * @return true if the pawn can be promoted (otherwise false).
      */
     public boolean canPromotePawn(@Nonnull Point endPosition) {
+        Objects.requireNonNull(endPosition);
+
         // It must be a legal move.
         if (!isLegalMove(endPosition)) {
             return false;

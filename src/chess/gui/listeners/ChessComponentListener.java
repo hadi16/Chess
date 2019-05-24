@@ -56,14 +56,9 @@ public class ChessComponentListener extends ChessListener implements ComponentLi
      * These methods are not used, but are required when implementing ComponentListener.
      */
     @Override
-    public void componentShown(ComponentEvent c) {
-    }
-
+    public void componentShown(ComponentEvent c) { }
     @Override
-    public void componentMoved(ComponentEvent c) {
-    }
-
+    public void componentMoved(ComponentEvent c) { }
     @Override
-    public void componentHidden(ComponentEvent c) {
-    }
+    public void componentHidden(ComponentEvent c) { }
 }

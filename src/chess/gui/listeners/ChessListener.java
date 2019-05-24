@@ -3,6 +3,7 @@ package chess.gui.listeners;
 import chess.gui.ChessGui;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Abstract Class: ChessListener
@@ -23,6 +24,8 @@ public abstract class ChessListener {
      * @param chessGui The reference to the GUI of the chess game.
      */
     protected ChessListener(@Nonnull ChessGui chessGui) {
+        Objects.requireNonNull(chessGui);
+
         this.chessGui = chessGui;
     }
 }

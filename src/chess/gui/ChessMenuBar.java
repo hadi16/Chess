@@ -5,6 +5,7 @@ import chess.gui.listeners.ChessMenuBarListener;
 
 import javax.annotation.Nonnull;
 import javax.swing.*;
+import java.util.Objects;
 
 /**
  * Class: ChessMenuBar
@@ -23,6 +24,8 @@ public class ChessMenuBar {
      * @param mainGui The reference to the game's main GUI.
      */
     public ChessMenuBar(@Nonnull ChessGui mainGui) {
+        Objects.requireNonNull(mainGui);
+
         // Required for macOS menu bar functionality
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 

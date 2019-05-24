@@ -6,6 +6,7 @@ import chess.info.IllegalMoveInfo;
 import chess.info.NotYourTurnInfo;
 
 import javax.annotation.Nonnull;
+import java.util.Objects;
 
 /**
  * Class: ChessGame
@@ -70,6 +71,8 @@ public class ChessGame {
      * @param action The ChessAction to perform.
      */
     public void receiveAction(@Nonnull ChessAction action) {
+        Objects.requireNonNull(action);
+
         // If the user clicked the New, Open, or Save menu items.
         if (action instanceof ChessMenuAction) {
             // Case 1: The "New" menu item was clicked (reset the game).

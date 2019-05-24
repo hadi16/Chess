@@ -2,6 +2,7 @@ package chess.action;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Class: ChessMoveAction
@@ -26,6 +27,9 @@ public class ChessMoveAction extends ChessAction {
      * @param endPosition The position of the piece to move to.
      */
     public ChessMoveAction(int playerId, @Nonnull Point startPosition, @Nonnull Point endPosition) {
+        Objects.requireNonNull(startPosition);
+        Objects.requireNonNull(endPosition);
+
         this.playerId = playerId;
 
         // Uses Point class copy constructor

@@ -9,6 +9,7 @@ import java.awt.*;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -39,6 +40,8 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param originalState The ChessState to copy.
      */
     public ChessState(@Nonnull ChessState originalState) {
+        Objects.requireNonNull(originalState);
+
         board = originalState.getBoardDeepCopy();
         currentTurn = originalState.currentTurn;
         checkedPlayer = originalState.checkedPlayer;
@@ -91,6 +94,8 @@ public class ChessState extends ChessGameInfo implements Serializable {
      */
     @Nonnull
     public ChessState getNextState(@Nonnull ChessMoveAction moveAction) {
+        Objects.requireNonNull(moveAction);
+
         // Get the starting and ending position for the piece.
         Point startPosition = moveAction.getStartPosition();
         Point endPosition = moveAction.getEndPosition();
@@ -130,6 +135,9 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @param piece The piece to set the board's position to.
      */
     private void setBoardAtPosition(@Nonnull Point position, @Nonnull Piece piece) {
+        Objects.requireNonNull(position);
+        Objects.requireNonNull(piece);
+
         // Position must always be in bounds.
         if (!Helpers.positionInBounds(position)) {
             return;
@@ -147,6 +155,8 @@ public class ChessState extends ChessGameInfo implements Serializable {
      */
     @Nonnull
     private Optional<Piece> removeAndReturnPieceAtPosition(@Nonnull Point position) {
+        Objects.requireNonNull(position);
+
         Piece removedPiece = board.remove(position);
         if (removedPiece == null) {
             return Optional.empty();
@@ -182,6 +192,7 @@ public class ChessState extends ChessGameInfo implements Serializable {
      * @return true if the position is in the board (otherwise false).
      */
     public boolean positionInBoard(@Nonnull Point position) {
+        Objects.requireNonNull(position);
         return board.containsKey(position);
     }
 
@@ -194,6 +205,8 @@ public class ChessState extends ChessGameInfo implements Serializable {
      */
     @Nonnull
     public Optional<Piece> getPieceAtPosition(@Nonnull Point position) {
+        Objects.requireNonNull(position);
+
         Piece pieceToGet = board.get(position);
         // Required, since using copy constructor below.
         if (pieceToGet == null) {

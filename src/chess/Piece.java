@@ -2,6 +2,7 @@ package chess;
 
 import javax.annotation.Nonnull;
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * Class: Piece
@@ -24,6 +25,8 @@ public class Piece implements Serializable {
      * @param player The player ID for the piece (0 or 1).
      */
     public Piece(@Nonnull PieceType pieceType, int player) {
+        Objects.requireNonNull(pieceType);
+
         this.pieceType = pieceType;
         this.player = player;
     }
@@ -35,6 +38,8 @@ public class Piece implements Serializable {
      * @param piece The chess piece to copy.
      */
     public Piece(@Nonnull Piece piece) {
+        Objects.requireNonNull(piece);
+
         pieceType = piece.pieceType;
         player = piece.player;
         moved = piece.moved;
@@ -68,6 +73,8 @@ public class Piece implements Serializable {
      * @param pieceType The piece type to set the piece to.
      */
     public void setPieceType(@Nonnull PieceType pieceType) {
+        Objects.requireNonNull(pieceType);
+
         // The piece type can only be changed
         // for a pawn (pawn promotion).
         if (this.pieceType != PieceType.PAWN) {

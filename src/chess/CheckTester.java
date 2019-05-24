@@ -4,6 +4,7 @@ import javax.annotation.Nonnull;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Class: CheckTester
@@ -32,6 +33,8 @@ public class CheckTester {
      * @param chessState The current state of the game.
      */
     public CheckTester(@Nonnull ChessState chessState) {
+        Objects.requireNonNull(chessState);
+
         this.chessState = chessState;
 
         // Loops through and adds each player's pieces and king position to the corresponding instance variables.
