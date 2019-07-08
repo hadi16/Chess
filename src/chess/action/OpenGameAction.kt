@@ -1,4 +1,4 @@
-package chess.action;
+package chess.action
 
 /**
  * Class: OpenGameAction
@@ -6,7 +6,6 @@ package chess.action;
  * Inherits from ChessMenuAction.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version July 2019
  */
-public class OpenGameAction extends ChessMenuAction {
-}
+class OpenGameAction : ChessMenuAction()

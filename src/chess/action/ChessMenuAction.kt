@@ -1,4 +1,4 @@
-package chess.action;
+package chess.action
 
 /**
  * Abstract Class: ChessMenuAction
@@ -6,7 +6,6 @@ package chess.action;
  * Inherits from ChessAction.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version July 2019
  */
-public abstract class ChessMenuAction extends ChessAction {
-}
+abstract class ChessMenuAction : ChessAction()

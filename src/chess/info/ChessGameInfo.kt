@@ -1,11 +1,10 @@
-package chess.info;
+package chess.info
 
 /**
  * Abstract Class: ChessGameInfo
  * The abstract base class for info in the Chess game.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version July 2019
  */
-public abstract class ChessGameInfo {
-}
+abstract class ChessGameInfo

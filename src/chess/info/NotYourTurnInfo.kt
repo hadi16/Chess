@@ -1,4 +1,4 @@
-package chess.info;
+package chess.info
 
 /**
  * Class: NotYourTurnInfo
@@ -6,7 +6,6 @@ package chess.info;
  * Inherits from ChessGameInfo.
  *
  * @author Alex Hadi
- * @version January 2019
+ * @version July 2019
  */
-public class NotYourTurnInfo extends ChessGameInfo {
-}
+class NotYourTurnInfo : ChessGameInfo()
