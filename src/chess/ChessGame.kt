@@ -21,11 +21,8 @@ class ChessGame {
     // (can be reassigned by open and reset game functionality)
     private var chessState: ChessState
 
-    /**
-     * Private Constructor: ChessGame
-     * Creates a new chess game.
-     */
-    constructor() {
+    // Creates a new chess game.
+    init {
         chessState = ChessState()
         chessGui = ChessGui(this, chessState)
         chessGui.updateCurrentPlayerLegalMoves()
@@ -35,9 +32,7 @@ class ChessGame {
      * Method: sendUpdatedStateToGui
      * Sends a deep copy of the master ChessState to the ChessGui reference.
      */
-    private fun sendUpdatedStateToGui() {
-        chessGui.receiveInfo(ChessState(chessState))
-    }
+    private fun sendUpdatedStateToGui() = chessGui.receiveInfo(ChessState(chessState))
 
     /**
      * Method: canMove
@@ -46,9 +41,7 @@ class ChessGame {
      * @param playerId The player number to check.
      * @return true if the player is allowed to make a move (otherwise false).
      */
-    private fun canMove(playerId: Int): Boolean {
-        return chessState.isMyTurn(playerId)
-    }
+    private fun canMove(playerId: Int): Boolean = chessState.isMyTurn(playerId)
 
     /**
      * Method: receiveAction
@@ -70,8 +63,7 @@ class ChessGame {
                 // Case 3: The "Save" menu item was clicked (trigger the save dialog).
                 is SaveGameAction -> chessIO.saveGame(chessState)
             }
-            // If the user made a move, first check if it is valid.
-            // Then, either send info that move was invalid or perform the move.
+
             // If the user made a move, first check if it is valid.
             // Then, either send info that move was invalid or perform the move.
         } else if (action is ChessMoveAction) {

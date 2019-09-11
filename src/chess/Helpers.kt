@@ -38,11 +38,7 @@ class Helpers {
 
             // If the position is in bounds of the chess board,
             // return it (otherwise, return empty optional).
-            return if (positionInBounds(pointClicked)) {
-                pointClicked
-            } else {
-                null
-            }
+            return if (positionInBounds(pointClicked)) pointClicked else null
         }
     }
 }

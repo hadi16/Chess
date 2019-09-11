@@ -45,11 +45,7 @@ enum class Direction {
          * @return The Direction that the pawn can go in for "normal" movements.
          */
         fun getPawnRegularDirection(player: Int): Direction {
-            return if (player == 0) {
-                SOUTH
-            } else {
-                NORTH
-            }
+            return if (player == 0) SOUTH else NORTH
         }
 
         /**

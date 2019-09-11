@@ -22,13 +22,9 @@ class ChessIO {
      *
      * @return The JFileChooser instance.
      */
-    private fun getFileChooser(): JFileChooser {
-        val fileChooser = JFileChooser()
-
+    private fun getFileChooser(): JFileChooser = JFileChooser().apply {
         // Can only open or save a chess state as a .txt file.
-        fileChooser.fileFilter = FileNameExtensionFilter("Text Files: *.txt", "txt")
-
-        return fileChooser
+        fileFilter = FileNameExtensionFilter("Text Files: *.txt", "txt")
     }
 
     /**
@@ -40,12 +36,14 @@ class ChessIO {
      */
     fun saveGame(stateToSave: ChessState) {
         // Create the save dialog.
-        val saveDialog = JFrame()
-        saveDialog.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        val saveDialog = JFrame().apply {
+            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        }
 
         // Initialize the JFileChooser.
-        val fileChooser = getFileChooser()
-        fileChooser.dialogTitle = "Please choose a save location and name."
+        val fileChooser = getFileChooser().apply {
+            dialogTitle = "Please choose a save location and name."
+        }
 
         val filename: File
         try {
@@ -88,12 +86,14 @@ class ChessIO {
      */
     fun openGame(): ChessState? {
         // Create the open dialog.
-        val openDialog = JFrame()
-        openDialog.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        val openDialog = JFrame().apply {
+            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+        }
 
         // Initialize the JFileChooser
-        val fileChooser = getFileChooser()
-        fileChooser.dialogTitle = "Please choose a saved game file to open."
+        val fileChooser = getFileChooser().apply {
+            dialogTitle = "Please choose a saved game file to open."
+        }
 
         // Gets the filename if the user selected "OK". Otherwise, returns.
         val filename: File
@@ -118,11 +118,9 @@ class ChessIO {
 
             return chessState
         } catch (e: Exception) {
+            // If an error occurred, print it to the console and return null.
             when (e) {
-                is IOException, is ClassNotFoundException -> {
-                    // If an error occurred, print it to the console and return null.
-                    e.printStackTrace()
-                }
+                is IOException, is ClassNotFoundException -> e.printStackTrace()
                 else -> throw e
             }
             return null
