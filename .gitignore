@@ -1,4 +1,6 @@
 .idea/
 out/
+lib/
+
 *.iml
 *.DS_Store
