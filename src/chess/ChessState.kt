@@ -19,8 +19,8 @@ class ChessState : ChessGameInfo, Serializable {
     var currentTurn: Int
         private set
 
-    // The player ID of the checked player (or -1 if neither are in check).
-    var checkedPlayer: Int
+    // The player ID of the checked player.
+    var maybeCheckedPlayer: Int?
         private set
 
     /**
@@ -29,8 +29,8 @@ class ChessState : ChessGameInfo, Serializable {
      */
     constructor() {
         this.board = this.getDefaultBoard()
-        this.currentTurn = this.getDefaultTurn()
-        this.checkedPlayer = this.getDefaultCheckedPlayer()
+        this.currentTurn = Constants.DEFAULT_TURN
+        this.maybeCheckedPlayer = null
     }
 
     /**
@@ -42,7 +42,7 @@ class ChessState : ChessGameInfo, Serializable {
     constructor(originalState: ChessState) {
         this.board = originalState.board
         this.currentTurn = originalState.currentTurn
-        this.checkedPlayer = originalState.checkedPlayer
+        this.maybeCheckedPlayer = originalState.maybeCheckedPlayer
     }
 
     /**
@@ -81,12 +81,6 @@ class ChessState : ChessGameInfo, Serializable {
         return board
     }
 
-    /** The white player always starts first. */
-    private fun getDefaultTurn(): Int = 1
-
-    /** Neither player is initially in check. */
-    private fun getDefaultCheckedPlayer(): Int = -1
-
     /**
      * Method: getNextState
      * Gets the next state of the game after a move is played in the game.
@@ -115,12 +109,8 @@ class ChessState : ChessGameInfo, Serializable {
             nextState.setBoardAtPosition(endPosition, newPiece)
         }
 
-        // Change the turn.
         nextState.changeTurn()
-
-        // Reset the checked player.
-        val checkTester = CheckTester(nextState)
-        nextState.checkedPlayer = checkTester.playerInCheck()
+        nextState.maybeCheckedPlayer = CheckTester(nextState).playerInCheck()
 
         return nextState
     }
@@ -133,12 +123,9 @@ class ChessState : ChessGameInfo, Serializable {
      * @param piece The piece to set the board's position to.
      */
     private fun setBoardAtPosition(position: Point, piece: Piece) {
-        // Position must always be in bounds.
-        if (!ChessUtil.positionInBounds(position)) {
-            return
+        if (ChessUtil.positionInBounds(position)) {
+            this.board[position] = piece
         }
-
-        this.board[position] = piece
     }
 
     /**
@@ -165,9 +152,7 @@ class ChessState : ChessGameInfo, Serializable {
      * @param player The player ID to check (0 or 1).
      * @return true if it is their turn (otherwise false).
      */
-    fun isMyTurn(player: Int): Boolean {
-        return this.currentTurn == player
-    }
+    fun isMyTurn(player: Int) = this.currentTurn == player
 
     /**
      * Method: positionInBoard
@@ -176,7 +161,7 @@ class ChessState : ChessGameInfo, Serializable {
      * @param position The position to check.
      * @return true if the position is in the board (otherwise false).
      */
-    fun positionInBoard(position: Point): Boolean = this.board.containsKey(position)
+    fun positionInBoard(position: Point) = this.board.contains(position)
 
     /**
      * Getter: getPieceAtPosition

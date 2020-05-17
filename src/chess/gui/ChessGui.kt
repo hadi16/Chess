@@ -12,7 +12,6 @@ import java.awt.*
 import java.util.*
 import javax.swing.JFrame
 import javax.swing.JOptionPane
-import javax.swing.JOptionPane.showMessageDialog
 import javax.swing.JPanel
 import javax.swing.WindowConstants
 import kotlin.properties.Delegates
@@ -39,18 +38,14 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
     // (for displaying text while the user hovers)
     var clickedPoint: Point? = null
         get() {
-            field?.let {
-                return Point(it)
-            }
+            field?.let { return Point(it) }
 
             return null
         }
 
     var hoverPoint: Point? = null
         get() {
-            field?.let {
-                return Point(it)
-            }
+            field?.let { return Point(it) }
 
             return null
         }
@@ -138,15 +133,10 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      * Displays a message dialog to the user about who is in check (if applicable).
      */
     private fun displayCheckedPlayerMessage() {
-        val checkedPlayer = this.chessState.checkedPlayer
-
-        // Make sure that there is a player in check.
-        if (checkedPlayer == -1) {
-            return
+        this.chessState.maybeCheckedPlayer?.let {
+            val MESSAGE = "Player $it is checked!"
+            JOptionPane.showMessageDialog(JFrame(), MESSAGE, "Warning", JOptionPane.WARNING_MESSAGE)
         }
-
-        // Show the checked player dialog to the user.
-        showMessageDialog(JFrame(), "Player $checkedPlayer is checked!", "Warning", JOptionPane.WARNING_MESSAGE)
     }
 
     /**
@@ -217,8 +207,8 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
         }
     }
 
-    private fun getTextPoint(canvas: Graphics, pieceSquare: Rectangle, text: String): Point {
-        val graphics2D = canvas as Graphics2D
+    private fun getTextPoint(canvas: Graphics, pieceSquare: Rectangle, text: String): Point? {
+        val graphics2D = canvas as? Graphics2D ?: return null
         val fontMetrics = graphics2D.fontMetrics
 
         return Point(
@@ -241,8 +231,7 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
 
         // Gets the text to draw and draws it on the piece square.
         val pieceText = piece.pieceType.toString()
-        val textPoint = this.getTextPoint(canvas, pieceSquare, pieceText)
-        canvas.drawString(pieceText, textPoint.x, textPoint.y)
+        this.getTextPoint(canvas, pieceSquare, pieceText)?.let { canvas.drawString(pieceText, it.x, it.y) }
     }
 
     /**
@@ -272,8 +261,7 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
 
             // Gets the text to draw and centers it on the piece square.
             val pieceText = piece.pieceType.unicodeValue
-            val textPoint = this.getTextPoint(canvas, pieceSquare, pieceText)
-            canvas.drawString(pieceText, textPoint.x, textPoint.y)
+            this.getTextPoint(canvas, pieceSquare, pieceText)?.let { canvas.drawString(pieceText, it.x, it.y) }
 
             // Draws the hover text for this square (if applicable).
             if (position == this.hoverPoint) {

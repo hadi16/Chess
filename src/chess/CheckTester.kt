@@ -60,5 +60,8 @@ class CheckTester(private val chessState: ChessState) {
      *
      * @return The player ID of the player in check (or -1 if neither are in check).
      */
-    fun playerInCheck(): Int = this.playersChecked.indexOf(true)
+    fun playerInCheck(): Int? {
+        val checkedPlayer = this.playersChecked.indexOf(true)
+        return if (checkedPlayer != -1) checkedPlayer else null
+    }
 }

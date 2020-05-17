@@ -48,7 +48,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
      */
     private fun getLegalEndPointsInDirection(direction: Direction, maxPoints: Int): ArrayList<Point> {
         // Add the x & y value to the current position's x & y and construct as a new position.
-        var currentPosition = Point(
+        val currentPosition = Point(
                 this.startPosition.x + direction.x,
                 this.startPosition.y + direction.y
         )
@@ -61,7 +61,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
             if (this.board.containsKey(currentPosition)) {
                 // As long as it is not one of the player's own pieces, they can attack it.
                 if (this.notFriendlyFire(currentPosition)) {
-                    legalEndPoints.add(currentPosition)
+                    legalEndPoints.add(Point(currentPosition))
                 }
 
                 // The pieces can't jump over other pieces.
@@ -69,13 +69,11 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
             }
 
             // Add the current position (there was no piece at this position)
-            legalEndPoints.add(currentPosition)
+            legalEndPoints.add(Point(currentPosition))
 
             // Add the x & y value for the direction to the current position's x & y value.
-            currentPosition = Point(
-                    currentPosition.x + direction.x,
-                    currentPosition.y + direction.y
-            )
+            currentPosition.x += direction.x
+            currentPosition.y += direction.y
         }
         return legalEndPoints
     }
@@ -156,12 +154,10 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
         // Otherwise, it can only move one space forward.
         val maxDistance = if (pawn.moved) 1 else 2
 
-        var currentPosition = Point(this.startPosition.x, this.startPosition.y)
+        val currentPosition = Point(this.startPosition.x, this.startPosition.y)
         for (i in 0 until maxDistance) {
-            currentPosition = Point(
-                    currentPosition.x + regularDirection.x,
-                    currentPosition.y + regularDirection.y
-            )
+            currentPosition.x += regularDirection.x
+            currentPosition.y += regularDirection.y
 
             // There can't be any obstructing pieces when pawn is moving regularly.
             if (this.board.containsKey(currentPosition)) {
@@ -170,7 +166,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
 
             // The position for the pawn's end point must be in bounds.
             if (ChessUtil.positionInBounds(currentPosition)) {
-                pawnLegalEndPoints.add(currentPosition)
+                pawnLegalEndPoints.add(Point(currentPosition))
             }
         }
 

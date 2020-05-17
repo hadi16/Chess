@@ -108,7 +108,8 @@ class ChessIO {
         try {
             val objectInputStream = ObjectInputStream(FileInputStream(filename))
 
-            val chessState = objectInputStream.readObject() as ChessState
+            val chessState = objectInputStream.readObject() as? ChessState ?: return null
+
             objectInputStream.close()
             println("The game state was successfully restored!")
 

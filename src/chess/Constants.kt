@@ -11,6 +11,9 @@ import java.awt.Color
  */
 class Constants {
     companion object {
+        // The white player always starts first.
+        const val DEFAULT_TURN = 1
+
         // The board width and number of players (standard chess values)
         const val BOARD_WIDTH = 8
         const val NUM_PLAYERS = 2
