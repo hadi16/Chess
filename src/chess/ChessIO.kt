@@ -8,14 +8,14 @@ import javax.swing.WindowConstants
 import javax.swing.filechooser.FileNameExtensionFilter
 
 /**
- * Class: ChessIO
+ * Object: ChessIO
  * Allows a chess state to be saved or opened.
  * Called by the ChessGame class.
  *
  * @author Alex Hadi
  * @version May 2020
  */
-class ChessIO {
+object ChessIO {
     /**
      * Helper Method: getFileChooser
      * Gets a new JFileChooser with a filter for text files.

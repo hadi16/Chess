@@ -1,8 +1,8 @@
 package chess.gui
 
-import chess.Constants.Companion.NEW_GAME_MENU_TEXT
-import chess.Constants.Companion.OPEN_GAME_MENU_TEXT
-import chess.Constants.Companion.SAVE_GAME_MENU_TEXT
+import chess.Constants.NEW_GAME_MENU_TEXT
+import chess.Constants.OPEN_GAME_MENU_TEXT
+import chess.Constants.SAVE_GAME_MENU_TEXT
 import chess.gui.listeners.ChessMenuBarListener
 import javax.swing.JMenu
 import javax.swing.JMenuBar

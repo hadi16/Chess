@@ -5,6 +5,8 @@ package chess.info
  * The abstract base class for info in the Chess game.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-abstract class ChessGameInfo
+abstract class ChessGameInfo {
+    open fun maybeErrorMessage(): String? = null
+}

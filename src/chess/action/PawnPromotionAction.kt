@@ -1,5 +1,6 @@
 package chess.action
 
+import chess.Piece
 import chess.PieceType
 import java.awt.Point
 
@@ -12,5 +13,7 @@ import java.awt.Point
  * @version May 2020
  */
 class PawnPromotionAction(
-        playerId: Int, startPoint: Point, endPoint: Point, val promotedPieceType: PieceType
-) : ChessMoveAction(playerId, startPoint, endPoint)
+        playerId: Int, startPoint: Point, endPoint: Point, private val promotedPieceType: PieceType
+) : ChessMoveAction(playerId, startPoint, endPoint) {
+    override fun getMovedPiece(piece: Piece): Piece = Piece(this.promotedPieceType, piece.player, true)
+}

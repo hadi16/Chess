@@ -6,6 +6,8 @@ package chess.info
  * Inherits from ChessGameInfo.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class IllegalMoveInfo : ChessGameInfo()
+class IllegalMoveInfo : ChessGameInfo() {
+    override fun maybeErrorMessage(): String? = "You attempted to make an illegal move!"
+}

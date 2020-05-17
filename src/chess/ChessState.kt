@@ -1,7 +1,6 @@
 package chess
 
 import chess.action.ChessMoveAction
-import chess.action.PawnPromotionAction
 import chess.info.ChessGameInfo
 import java.awt.Point
 import java.io.Serializable
@@ -97,16 +96,8 @@ class ChessState : ChessGameInfo, Serializable {
         val nextState = ChessState(this)
 
         // Get the piece to move and sets it as moved.
-        nextState.removeAndReturnPieceAtPosition(startPosition)?.let {
-            val newPiece: Piece = if (moveAction is PawnPromotionAction) {
-                // If the action involved pawn promotion, update the piece type.
-                Piece(moveAction.promotedPieceType, it.player, true)
-            } else {
-                Piece(it.pieceType, it.player, true)
-            }
-
-            // Set the piece in the master state.
-            nextState.setBoardAtPosition(endPosition, newPiece)
+        nextState.board.remove(startPosition)?.let {
+            nextState.setBoardAtPosition(endPosition, moveAction.getMovedPiece(it))
         }
 
         nextState.changeTurn()
@@ -127,15 +118,6 @@ class ChessState : ChessGameInfo, Serializable {
             this.board[position] = piece
         }
     }
-
-    /**
-     * Helper Method: removeAndReturnPieceAtPosition
-     * Removes the Piece at the given position (or null).
-     *
-     * @param position The position to remove the piece at.
-     * @return The Piece at this position (or null).
-     */
-    private fun removeAndReturnPieceAtPosition(position: Point): Piece? = this.board.remove(position)
 
     /**
      * Helper Method: changeTurn

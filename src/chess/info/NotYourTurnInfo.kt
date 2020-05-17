@@ -6,6 +6,8 @@ package chess.info
  * Inherits from ChessGameInfo.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class NotYourTurnInfo : ChessGameInfo()
+class NotYourTurnInfo : ChessGameInfo() {
+    override fun maybeErrorMessage(): String? = "It is not your turn!"
+}

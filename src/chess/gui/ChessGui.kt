@@ -6,8 +6,6 @@ import chess.gui.listeners.ChessComponentListener
 import chess.gui.listeners.ChessMouseListener
 import chess.gui.listeners.ChessMouseMotionListener
 import chess.info.ChessGameInfo
-import chess.info.IllegalMoveInfo
-import chess.info.NotYourTurnInfo
 import java.awt.*
 import java.util.*
 import javax.swing.JFrame
@@ -103,21 +101,14 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      * @param info The info to receive (as a ChessGameInfo object).
      */
     fun receiveInfo(info: ChessGameInfo) {
-        when (info) {
-            // An illegal move was attempted.
-            is IllegalMoveInfo -> {
-                System.err.println("You attempted to make an illegal move!")
-                return
-            }
-
-            // Tried to play out of turn.
-            is NotYourTurnInfo -> {
-                System.err.println("It is not your turn!")
-                return
-            }
+        info.maybeErrorMessage()?.let {
+            System.err.println(it)
+            return@receiveInfo
         }
 
-        this.chessState = if (info is ChessState) info else return
+        require(info is ChessState) { "Invalid info object passed!" }
+
+        this.chessState = info
 
         // Update the current player's legal moves.
         this.updateCurrentPlayerLegalMoves()
@@ -207,10 +198,10 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
         }
     }
 
-    private fun getTextPoint(canvas: Graphics, pieceSquare: Rectangle, text: String): Point? {
-        val graphics2D = canvas as? Graphics2D ?: return null
-        val fontMetrics = graphics2D.fontMetrics
+    private fun getTextPoint(canvas: Graphics, pieceSquare: Rectangle, text: String): Point {
+        require(canvas is Graphics2D) { "Invalid Graphics object!" }
 
+        val fontMetrics = canvas.fontMetrics
         return Point(
                 pieceSquare.x + (pieceSquare.width - fontMetrics.stringWidth(text)) / 2,
                 pieceSquare.y + (pieceSquare.height - fontMetrics.height) / 2 + fontMetrics.ascent
@@ -231,7 +222,8 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
 
         // Gets the text to draw and draws it on the piece square.
         val pieceText = piece.pieceType.toString()
-        this.getTextPoint(canvas, pieceSquare, pieceText)?.let { canvas.drawString(pieceText, it.x, it.y) }
+        val textPoint = this.getTextPoint(canvas, pieceSquare, pieceText)
+        canvas.drawString(pieceText, textPoint.x, textPoint.y)
     }
 
     /**
@@ -261,7 +253,8 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
 
             // Gets the text to draw and centers it on the piece square.
             val pieceText = piece.pieceType.unicodeValue
-            this.getTextPoint(canvas, pieceSquare, pieceText)?.let { canvas.drawString(pieceText, it.x, it.y) }
+            val textPoint = this.getTextPoint(canvas, pieceSquare, pieceText)
+            canvas.drawString(pieceText, textPoint.x, textPoint.y)
 
             // Draws the hover text for this square (if applicable).
             if (position == this.hoverPoint) {
