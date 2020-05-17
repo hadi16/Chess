@@ -38,9 +38,7 @@ class ChessComponentListener(chessGui: ChessGui) : ChessListener(chessGui), Comp
         this.chessGui.repaint()
     }
 
-    /*
-     * These methods are not used, but are required when implementing ComponentListener.
-     */
+    /* These methods are not used, but are required when implementing ComponentListener. */
     override fun componentShown(c: ComponentEvent) {}
     override fun componentMoved(c: ComponentEvent) {}
     override fun componentHidden(c: ComponentEvent) {}

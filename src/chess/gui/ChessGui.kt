@@ -12,8 +12,10 @@ import java.awt.*
 import java.util.*
 import javax.swing.JFrame
 import javax.swing.JOptionPane
+import javax.swing.JOptionPane.showMessageDialog
 import javax.swing.JPanel
 import javax.swing.WindowConstants
+import kotlin.properties.Delegates
 
 /**
  * Class: ChessGui
@@ -26,7 +28,7 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
     private val chessGameFrame = JFrame("Chess")
 
     // Maps each Point to a list of legal end points.
-    private val currentPlayerLegalMoves: HashMap<Point, ArrayList<Point>> = hashMapOf()
+    private val currentPlayerLegalMoves: HashMap<Point, List<Point>> = hashMapOf()
 
     // The current state of the game.
     var chessState: ChessState = chessState
@@ -54,7 +56,7 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
         }
 
     // The current scaling factor of the game.
-    var scaleDim: Int = 1
+    var scaleDim by Delegates.notNull<Int>()
 
     init {
         // Add the mouse listeners (for clicking and hovering)
@@ -106,24 +108,21 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      * @param info The info to receive (as a ChessGameInfo object).
      */
     fun receiveInfo(info: ChessGameInfo) {
-        // An illegal move was attempted.
-        if (info is IllegalMoveInfo) {
-            System.err.println("You attempted to make an illegal move!")
-            return
+        when (info) {
+            // An illegal move was attempted.
+            is IllegalMoveInfo -> {
+                System.err.println("You attempted to make an illegal move!")
+                return
+            }
+
+            // Tried to play out of turn.
+            is NotYourTurnInfo -> {
+                System.err.println("It is not your turn!")
+                return
+            }
         }
 
-        // Tried to play out of turn.
-        if (info is NotYourTurnInfo) {
-            System.err.println("It is not your turn!")
-            return
-        }
-
-        // Makes sure that a ChessState was sent.
-        if (info !is ChessState) {
-            return
-        }
-
-        this.chessState = info
+        this.chessState = if (info is ChessState) info else return
 
         // Update the current player's legal moves.
         this.updateCurrentPlayerLegalMoves()
@@ -147,12 +146,7 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
         }
 
         // Show the checked player dialog to the user.
-        JOptionPane.showMessageDialog(
-                JFrame(),
-                String.format("Player %d is checked!", checkedPlayer),
-                "Warning",
-                JOptionPane.WARNING_MESSAGE
-        )
+        showMessageDialog(JFrame(), "Player $checkedPlayer is checked!", "Warning", JOptionPane.WARNING_MESSAGE)
     }
 
     /**
@@ -161,9 +155,7 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      *
      * @param actionToSend The action to send to the game.
      */
-    fun sendActionToGame(actionToSend: ChessAction) {
-        this.chessGame.receiveAction(actionToSend)
-    }
+    fun sendActionToGame(actionToSend: ChessAction) = this.chessGame.receiveAction(actionToSend)
 
     /**
      * Method: drawLegalMoves
@@ -196,15 +188,11 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      * @param canvas The Graphics reference.
      */
     private fun drawChessBoardWithSelectedSquare(canvas: Graphics) {
-        Objects.requireNonNull(canvas)
-
         for (i in 0 until Constants.BOARD_WIDTH) {
             for (j in 0 until Constants.BOARD_WIDTH) {
                 // Sets the color of the square to draw.
                 canvas.color = when {
-                    Point(i, j) == this.clickedPoint -> {
-                        Constants.GOLD
-                    }
+                    Point(i, j) == this.clickedPoint -> Constants.GOLD
 
                     i % 2 == 0 -> {
                         if (j % 2 == 0) {
@@ -229,6 +217,16 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
         }
     }
 
+    private fun getTextPoint(canvas: Graphics, pieceSquare: Rectangle, text: String): Point {
+        val graphics2D = canvas as Graphics2D
+        val fontMetrics = graphics2D.fontMetrics
+
+        return Point(
+                pieceSquare.x + (pieceSquare.width - fontMetrics.stringWidth(text)) / 2,
+                pieceSquare.y + (pieceSquare.height - fontMetrics.height) / 2 + fontMetrics.ascent
+        )
+    }
+
     /**
      * Method: drawHoverText
      * Draws the text when the user hovers over a piece on the board (each piece's type).
@@ -238,27 +236,13 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      * @param piece The piece that is occupied by that square (used to get the text to draw).
      */
     private fun drawHoverText(canvas: Graphics, pieceSquare: Rectangle, piece: Piece) {
-        Objects.requireNonNull(canvas)
-        Objects.requireNonNull(pieceSquare)
-        Objects.requireNonNull(piece)
-
-        // Set the font and color of the font.
         canvas.font = Font("Arial", Font.BOLD, (this.scaleDim / 4))
-
-        val canvasColor = if (piece.player == 0) Color.white else Color.black
-        canvas.color = canvasColor
-
-        // Get the current FontMetrics (to center the font on the piece).
-        val graphics2D: Graphics2D = canvas as Graphics2D
-        val fontMetrics = graphics2D.fontMetrics
+        canvas.color = if (piece.player == 0) Color.white else Color.black
 
         // Gets the text to draw and draws it on the piece square.
-        val pieceTypeText = piece.pieceType.toString()
-        canvas.drawString(
-                pieceTypeText,
-                pieceSquare.x + ((pieceSquare.width - fontMetrics.stringWidth(pieceTypeText)) / 2),
-                pieceSquare.y + (((pieceSquare.height - fontMetrics.height) / 2) + fontMetrics.ascent)
-        )
+        val pieceText = piece.pieceType.toString()
+        val textPoint = this.getTextPoint(canvas, pieceSquare, pieceText)
+        canvas.drawString(pieceText, textPoint.x, textPoint.y)
     }
 
     /**
@@ -268,9 +252,6 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      * @param canvas The Graphics reference.
      */
     private fun drawPieces(canvas: Graphics) {
-        // Needed for getting the FontMetrics object.
-        val graphics2D = canvas as Graphics2D
-
         // Gets a copy of the board, which contains the pieces to draw.
         val board = this.chessState.board
         for (entry in board.entries) {
@@ -286,22 +267,13 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
                     this.scaleDim
             )
 
-            // Sets the font and font color.
-            canvas.setFont(Font("Serif", Font.PLAIN, this.scaleDim))
-
-            val canvasColor = if (piece.player == 0) Color.black else Color.white
-            canvas.setColor(canvasColor)
-
-            // Needed to center the piece on the square.
-            val fontMetrics = graphics2D.fontMetrics
+            canvas.font = Font("Serif", Font.PLAIN, this.scaleDim)
+            canvas.color = if (piece.player == 0) Color.black else Color.white
 
             // Gets the text to draw and centers it on the piece square.
             val pieceText = piece.pieceType.unicodeValue
-            graphics2D.drawString(
-                    pieceText,
-                    pieceSquare.x + ((pieceSquare.width - fontMetrics.stringWidth(pieceText)) / 2),
-                    pieceSquare.y + (((pieceSquare.height - fontMetrics.height) / 2) + fontMetrics.ascent)
-            )
+            val textPoint = this.getTextPoint(canvas, pieceSquare, pieceText)
+            canvas.drawString(pieceText, textPoint.x, textPoint.y)
 
             // Draws the hover text for this square (if applicable).
             if (position == this.hoverPoint) {
@@ -332,8 +304,5 @@ class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPane
      *
      * @return A deep copy of the JFrame dimensions.
      */
-    fun gameFrameBounds(): Rectangle {
-        // Uses Rectangle's copy constructor.
-        return Rectangle(this.chessGameFrame.bounds)
-    }
+    fun gameFrameBounds(): Rectangle = Rectangle(this.chessGameFrame.bounds)
 }

@@ -51,36 +51,33 @@ class ChessGame {
      * @param action The ChessAction to perform.
      */
     fun receiveAction(action: ChessAction) {
-        // If the user clicked the New, Open, or Save menu items.
-        if (action is ChessMenuAction) {
-            when (action) {
-                // Case 1: The "New" menu item was clicked (reset the game).
-                is ResetGameAction -> this.chessState = ChessState()
+        when (action) {
+            // Case 1: The "New" menu item was clicked (reset the game).
+            is ResetGameAction -> this.chessState = ChessState()
 
-                // Case 2: The "Open" menu item was clicked (trigger the open dialog).
-                is OpenGameAction -> this.chessIO.openGame()?.let { this.chessState = it }
+            // Case 2: The "Open" menu item was clicked (trigger the open dialog).
+            is OpenGameAction -> this.chessIO.openGame()?.let { this.chessState = it }
 
-                // Case 3: The "Save" menu item was clicked (trigger the save dialog).
-                is SaveGameAction -> this.chessIO.saveGame(this.chessState)
+            // Case 3: The "Save" menu item was clicked (trigger the save dialog).
+            is SaveGameAction -> this.chessIO.saveGame(this.chessState)
+
+            // Case 4: The player is attempting to move.
+            is ChessMoveAction -> {
+                // The player attempted to make a move when it isn't their turn.
+                if (!this.canMove(action.playerId)) {
+                    this.chessGui.receiveInfo(NotYourTurnInfo())
+                    return
+                }
+
+                // The player attempted to make an illegal move.
+                val chessRules = ChessRules(action.startPosition, this.chessState)
+                if (!chessRules.isLegalMove(action.endPosition)) {
+                    this.chessGui.receiveInfo(IllegalMoveInfo())
+                    return
+                }
+
+                this.chessState = this.chessState.getNextState(action)
             }
-
-            // If the user made a move, first check if it is valid.
-            // Then, either send info that move was invalid or perform the move.
-        } else if (action is ChessMoveAction) {
-            // The player attempted to make a move when it isn't their turn.
-            if (!this.canMove(action.playerId)) {
-                this.chessGui.receiveInfo(NotYourTurnInfo())
-                return
-            }
-
-            // The player attempted to make an illegal move.
-            val chessRules = ChessRules(action.startPosition, this.chessState)
-            if (!chessRules.isLegalMove(action.endPosition)) {
-                this.chessGui.receiveInfo(IllegalMoveInfo())
-                return
-            }
-
-            this.chessState = this.chessState.getNextState(action)
         }
 
         // Send a deep copy of the updated master state to the GUI.

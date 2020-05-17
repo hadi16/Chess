@@ -56,7 +56,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
         // The end points must be in bounds.
         // The # of current end points must also be less than the max # of end points to be able to add more to it.
         val legalEndPoints = ArrayList<Point>()
-        while (Helpers.positionInBounds(currentPosition) && legalEndPoints.size < maxPoints) {
+        while (ChessUtil.positionInBounds(currentPosition) && legalEndPoints.size < maxPoints) {
             // If the position has a piece in it.
             if (this.board.containsKey(currentPosition)) {
                 // As long as it is not one of the player's own pieces, they can attack it.
@@ -130,7 +130,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
                 .map { Point(this.startPosition.x + it.x, this.startPosition.y + it.y) }
                 // Checks to make sure this position is in bounds & not friendly fire.
                 // If so, it is a legal end point, so it is added.
-                .filterTo(ArrayList()) { Helpers.positionInBounds(it) && this.notFriendlyFire(it) }
+                .filterTo(ArrayList()) { ChessUtil.positionInBounds(it) && this.notFriendlyFire(it) }
     }
 
     /**
@@ -169,7 +169,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
             }
 
             // The position for the pawn's end point must be in bounds.
-            if (Helpers.positionInBounds(currentPosition)) {
+            if (ChessUtil.positionInBounds(currentPosition)) {
                 pawnLegalEndPoints.add(currentPosition)
             }
         }

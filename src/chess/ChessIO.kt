@@ -63,9 +63,7 @@ class ChessIO {
         }
 
         try {
-            val objectOutputStream = ObjectOutputStream(
-                    FileOutputStream(filename)
-            )
+            val objectOutputStream = ObjectOutputStream(FileOutputStream(filename))
 
             // GameState object is serialized.
             objectOutputStream.writeObject(stateToSave)
@@ -108,22 +106,19 @@ class ChessIO {
 
         // Attempts to de-serialize the file as a ChessState object.
         try {
-            val objectInputStream = ObjectInputStream(
-                    FileInputStream(filename)
-            )
+            val objectInputStream = ObjectInputStream(FileInputStream(filename))
 
             val chessState = objectInputStream.readObject() as ChessState
             objectInputStream.close()
             println("The game state was successfully restored!")
 
             return chessState
-        } catch (e: Exception) {
-            // If an error occurred, print it to the console and return null.
-            when (e) {
-                is IOException, is ClassNotFoundException -> e.printStackTrace()
-                else -> throw e
-            }
-            return null
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
         }
+
+        return null
     }
 }

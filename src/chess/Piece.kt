@@ -10,10 +10,9 @@ import java.io.Serializable
  * @version May 2020
  */
 class Piece : Serializable {
+    val pieceType: PieceType
     val player: Int
-
-    var moved: Boolean = false
-    var pieceType: PieceType // Can only change with pawn promotion.
+    val moved: Boolean
 
     /**
      * Constructor: Piece
@@ -21,10 +20,25 @@ class Piece : Serializable {
      *
      * @param pieceType The piece type (as an instance of the PieceType enumeration).
      * @param player The player ID for the piece (0 or 1).
+     * @param moved Whether the piece has moved.
+     */
+    constructor(pieceType: PieceType, player: Int, moved: Boolean) {
+        this.pieceType = pieceType
+        this.player = player
+        this.moved = moved
+    }
+
+    /**
+     * Constructor: Piece
+     * Creates a new chess piece in the game that has not moved.
+     *
+     * @param pieceType The piece type (as an instance of the PieceType enumeration).
+     * @param player The player ID for the piece (0 or 1).
      */
     constructor(pieceType: PieceType, player: Int) {
         this.pieceType = pieceType
         this.player = player
+        this.moved = false
     }
 
     /**

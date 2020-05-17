@@ -104,15 +104,15 @@ class ChessState : ChessGameInfo, Serializable {
 
         // Get the piece to move and sets it as moved.
         nextState.removeAndReturnPieceAtPosition(startPosition)?.let {
-            it.moved = true
-
-            // If the action involved pawn promotion, update the piece type.
-            if (moveAction is PawnPromotionAction) {
-                it.pieceType = moveAction.promotedPieceType
+            val newPiece: Piece = if (moveAction is PawnPromotionAction) {
+                // If the action involved pawn promotion, update the piece type.
+                Piece(moveAction.promotedPieceType, it.player, true)
+            } else {
+                Piece(it.pieceType, it.player, true)
             }
 
             // Set the piece in the master state.
-            nextState.setBoardAtPosition(endPosition, it)
+            nextState.setBoardAtPosition(endPosition, newPiece)
         }
 
         // Change the turn.
@@ -134,7 +134,7 @@ class ChessState : ChessGameInfo, Serializable {
      */
     private fun setBoardAtPosition(position: Point, piece: Piece) {
         // Position must always be in bounds.
-        if (!Helpers.positionInBounds(position)) {
+        if (!ChessUtil.positionInBounds(position)) {
             return
         }
 
@@ -199,10 +199,14 @@ class ChessState : ChessGameInfo, Serializable {
      * @param playerId The ID of the player (0 or 1).
      * @return A deep copy of the position of the player's king.
      */
-    fun getKingPosition(playerId: Int): Point? = this.board.entries.singleOrNull {
-        val piece = it.value
-        piece.pieceType == PieceType.KING && piece.player == playerId
-    }?.key
+    fun getKingPosition(playerId: Int): Point? {
+        val maybeKingPosition = this.board.entries.singleOrNull {
+            val piece = it.value
+            piece.pieceType == PieceType.KING && piece.player == playerId
+        }
+
+        return maybeKingPosition?.let(MutableMap.MutableEntry<Point, Piece>::key)
+    }
 
     /**
      * Getter: getPlayerPieces

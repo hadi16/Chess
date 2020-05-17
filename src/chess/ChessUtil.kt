@@ -3,13 +3,13 @@ package chess
 import java.awt.Point
 
 /**
- * Class: Helpers
+ * Class: ChessUtil
  * Contains static helper methods that are used throughout the codebase.
  *
  * @author Alex Hadi
  * @version May 2020
  */
-class Helpers {
+class ChessUtil {
     companion object {
         /**
          * Static Method: positionInBounds

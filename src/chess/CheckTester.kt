@@ -21,15 +21,20 @@ class CheckTester(private val chessState: ChessState) {
     private val playersChecked = ArrayList<Boolean>()
 
     init {
-        // Loops through and adds each player's pieces and king position to the corresponding instance variables.
         for (playerId in 0 until Constants.NUM_PLAYERS) {
             this.playerPieces.add(this.chessState.getPlayerPieces(playerId))
             this.chessState.getKingPosition(playerId)?.let(this.kingPositions::add)
         }
 
         // Loops through and determines which player(s) are in check (if any)
-        for (playerId in 0 until Constants.NUM_PLAYERS) {
-            this.playersChecked.add(this.playerInCheck(playerId))
+        this.run {
+            if (this.kingPositions.size != 2) {
+                return@run
+            }
+
+            for (playerId in 0 until Constants.NUM_PLAYERS) {
+                this.playersChecked.add(this.playerInCheck(playerId))
+            }
         }
     }
 

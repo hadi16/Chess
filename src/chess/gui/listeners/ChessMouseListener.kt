@@ -1,7 +1,7 @@
 package chess.gui.listeners
 
 import chess.ChessRules
-import chess.Helpers
+import chess.ChessUtil
 import chess.action.ChessAction
 import chess.action.ChessMoveAction
 import chess.action.PawnPromotionAction
@@ -32,7 +32,7 @@ class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseLis
 
         // Uses the x and y position of the mouse
         // w/ the scaleDim of the game to calculate the position clicked on the board.
-        val clickedPoint = Helpers.getValidPointOrEmpty(
+        val clickedPoint = ChessUtil.getValidPointOrEmpty(
                 Point(mouseEvent.x, mouseEvent.y), this.chessGui.scaleDim
         )
 
@@ -41,7 +41,7 @@ class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseLis
 
         // If the user didn't click a valid point on the board.
         // Or, if the user selected the same position on the board (deselected a piece).
-        if (clickedPoint == null || (clickedPoint == previousClickedPoint)) {
+        if (clickedPoint == null || clickedPoint == previousClickedPoint) {
             this.chessGui.clickedPoint = null
             this.chessGui.repaint()
             return
@@ -88,9 +88,7 @@ class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseLis
         this.chessGui.repaint()
     }
 
-    /*
-     * These methods are required when implementing MouseListener, but are not used.
-     */
+    /* These methods are required when implementing MouseListener, but are not used. */
     override fun mousePressed(e: MouseEvent) {}
     override fun mouseReleased(e: MouseEvent) {}
     override fun mouseEntered(e: MouseEvent) {}
