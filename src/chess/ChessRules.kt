@@ -125,18 +125,12 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
                 Point(2, -1), Point(2, 1)
         )
 
-        // Goes through each of the legal knight directions.
-        val knightLegalEndPoints = ArrayList<Point>()
-        for (direction: Point in ALL_KNIGHT_DIRECTIONS) {
-            val endPosition = Point(this.startPosition.x + direction.x, this.startPosition.y + direction.y)
-
-            // Checks to make sure this position is in bounds & not friendly fire.
-            // If so, it is a legal end point, so it is added.
-            if (Helpers.positionInBounds(endPosition) && this.notFriendlyFire(endPosition)) {
-                knightLegalEndPoints.add(endPosition)
-            }
-        }
-        return knightLegalEndPoints
+        return ALL_KNIGHT_DIRECTIONS
+                .asSequence()
+                .map { Point(this.startPosition.x + it.x, this.startPosition.y + it.y) }
+                // Checks to make sure this position is in bounds & not friendly fire.
+                // If so, it is a legal end point, so it is added.
+                .filterTo(ArrayList()) { Helpers.positionInBounds(it) && this.notFriendlyFire(it) }
     }
 
     /**
@@ -149,19 +143,11 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
         // Create the list of legal end points to return & get the pawn.
         val pawn = this.board[this.startPosition] ?: return ArrayList()
 
-        val pawnLegalEndPoints = ArrayList<Point>()
-        // Goes through the attacking directions & adds at most one position.
-        for (direction in Direction.getPawnAttackingDirections(pawn.player)) {
-            val attackingPosition = Point(
-                    this.startPosition.x + direction.x,
-                    this.startPosition.y + direction.y
-            )
-
-            // There must be a piece to attack and it must not be friendly fire.
-            if (this.board.containsKey(attackingPosition) && this.notFriendlyFire(attackingPosition)) {
-                pawnLegalEndPoints.add(attackingPosition)
-            }
-        }
+        val pawnLegalEndPoints = Direction.getPawnAttackingDirections(pawn.player)
+                .asSequence()
+                .map { Point(this.startPosition.x + it.x, this.startPosition.y + it.y) }
+                // There must be a piece to attack and it must not be friendly fire.
+                .filterTo(ArrayList<Point>()) { this.board.containsKey(it) && this.notFriendlyFire(it) }
 
         // Gets the "regular" moving direction for the pawn & initializes the current position.
         val regularDirection = Direction.getPawnRegularDirection(pawn.player)
