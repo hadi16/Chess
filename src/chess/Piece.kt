@@ -7,7 +7,7 @@ import java.io.Serializable
  * Represents a chess piece in the game.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
 class Piece : Serializable {
     val player: Int
@@ -34,8 +34,8 @@ class Piece : Serializable {
      * @param piece The chess piece to copy.
      */
     constructor(piece: Piece) {
-        pieceType = piece.pieceType
-        player = piece.player
-        moved = piece.moved
+        this.pieceType = piece.pieceType
+        this.player = piece.player
+        this.moved = piece.moved
     }
 }

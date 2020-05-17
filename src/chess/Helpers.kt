@@ -7,7 +7,7 @@ import java.awt.Point
  * Contains static helper methods that are used throughout the codebase.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
 class Helpers {
     companion object {
@@ -38,7 +38,7 @@ class Helpers {
 
             // If the position is in bounds of the chess board,
             // return it (otherwise, return empty optional).
-            return if (positionInBounds(pointClicked)) pointClicked else null
+            return if (this.positionInBounds(pointClicked)) pointClicked else null
         }
     }
 }

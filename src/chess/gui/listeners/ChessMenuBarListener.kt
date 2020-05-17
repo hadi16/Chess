@@ -40,7 +40,7 @@ class ChessMenuBarListener(chessGui: ChessGui) : ChessListener(chessGui), Action
         }
 
         // Sends the action back to the game and repaints.
-        chessGui.sendActionToGame(chessMenuAction)
-        chessGui.repaint()
+        this.chessGui.sendActionToGame(chessMenuAction)
+        this.chessGui.repaint()
     }
 }

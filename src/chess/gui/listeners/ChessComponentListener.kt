@@ -22,7 +22,7 @@ class ChessComponentListener(chessGui: ChessGui) : ChessListener(chessGui), Comp
      *
      * @param c The ComponentEvent reference (it is not used in this implementation)
      */
-    override fun componentResized(c: ComponentEvent) = setGameSize()
+    override fun componentResized(c: ComponentEvent) = this.setGameSize()
 
     /**
      * Method: setGameSize
@@ -30,12 +30,12 @@ class ChessComponentListener(chessGui: ChessGui) : ChessListener(chessGui), Comp
      */
     private fun setGameSize() {
         // Finds shorter dimension.
-        val gameFrameBounds = chessGui.gameFrameBounds()
+        val gameFrameBounds = this.chessGui.gameFrameBounds()
         val frameDim = min(gameFrameBounds.height, gameFrameBounds.width)
 
         // Resets scaleDim and repaints.
-        chessGui.scaleDim = frameDim / (Constants.BOARD_WIDTH + 1)
-        chessGui.repaint()
+        this.chessGui.scaleDim = frameDim / (Constants.BOARD_WIDTH + 1)
+        this.chessGui.repaint()
     }
 
     /*

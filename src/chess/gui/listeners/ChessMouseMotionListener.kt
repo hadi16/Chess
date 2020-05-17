@@ -24,14 +24,14 @@ class ChessMouseMotionListener(chessGui: ChessGui) : ChessListener(chessGui), Mo
     override fun mouseMoved(mouseEvent: MouseEvent) {
         // Uses the x & y positions of the mouse w/ the scaleDim
         // to calculate the position on the board where the user's mouse is.
-        Helpers.getValidPointOrEmpty(Point(mouseEvent.x, mouseEvent.y), chessGui.scaleDim)?.let {
+        Helpers.getValidPointOrEmpty(Point(mouseEvent.x, mouseEvent.y), this.chessGui.scaleDim)?.let {
             // Determines if a piece is there & sets the hover point accordingly.
-            val hoverPoint: Point? = if (chessGui.chessState.positionInBoard(it)) it else null
+            val hoverPoint: Point? = if (this.chessGui.chessState.positionInBoard(it)) it else null
 
-            chessGui.hoverPoint = hoverPoint
+            this.chessGui.hoverPoint = hoverPoint
         }
 
-        chessGui.repaint()
+        this.chessGui.repaint()
     }
 
     /*

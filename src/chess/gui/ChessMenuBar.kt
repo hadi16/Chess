@@ -40,7 +40,7 @@ class ChessMenuBar(mainGui: ChessGui) {
         fileMenu.add(saveMenuItem)
 
         // Add menu to the main menubar.
-        menuBar = JMenuBar()
-        menuBar.add(fileMenu)
+        this.menuBar = JMenuBar()
+        this.menuBar.add(fileMenu)
     }
 }

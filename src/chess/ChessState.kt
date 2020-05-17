@@ -11,7 +11,7 @@ import java.io.Serializable
  * Represents a state in the chess game.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
 class ChessState : ChessGameInfo, Serializable {
     val board: HashMap<Point, Piece>
@@ -28,9 +28,9 @@ class ChessState : ChessGameInfo, Serializable {
      * Creates a new chess state. Just sets it to the default state
      */
     constructor() {
-        board = getDefaultBoard()
-        currentTurn = getDefaultTurn()
-        checkedPlayer = getDefaultCheckedPlayer()
+        this.board = this.getDefaultBoard()
+        this.currentTurn = this.getDefaultTurn()
+        this.checkedPlayer = this.getDefaultCheckedPlayer()
     }
 
     /**
@@ -40,9 +40,9 @@ class ChessState : ChessGameInfo, Serializable {
      * @param originalState The ChessState to copy.
      */
     constructor(originalState: ChessState) {
-        board = originalState.board
-        currentTurn = originalState.currentTurn
-        checkedPlayer = originalState.checkedPlayer
+        this.board = originalState.board
+        this.currentTurn = originalState.currentTurn
+        this.checkedPlayer = originalState.checkedPlayer
     }
 
     /**
@@ -138,7 +138,7 @@ class ChessState : ChessGameInfo, Serializable {
             return
         }
 
-        board[position] = piece
+        this.board[position] = piece
     }
 
     /**
@@ -148,14 +148,14 @@ class ChessState : ChessGameInfo, Serializable {
      * @param position The position to remove the piece at.
      * @return The Piece at this position (or null).
      */
-    private fun removeAndReturnPieceAtPosition(position: Point): Piece? = board.remove(position)
+    private fun removeAndReturnPieceAtPosition(position: Point): Piece? = this.board.remove(position)
 
     /**
      * Helper Method: changeTurn
      * Changes the current turn to the other player ID (0->1 or 1->0)
      */
     private fun changeTurn() {
-        currentTurn = 1 - currentTurn
+        this.currentTurn = 1 - this.currentTurn
     }
 
     /**
@@ -166,7 +166,7 @@ class ChessState : ChessGameInfo, Serializable {
      * @return true if it is their turn (otherwise false).
      */
     fun isMyTurn(player: Int): Boolean {
-        return currentTurn == player
+        return this.currentTurn == player
     }
 
     /**
@@ -176,7 +176,7 @@ class ChessState : ChessGameInfo, Serializable {
      * @param position The position to check.
      * @return true if the position is in the board (otherwise false).
      */
-    fun positionInBoard(position: Point): Boolean = board.containsKey(position)
+    fun positionInBoard(position: Point): Boolean = this.board.containsKey(position)
 
     /**
      * Getter: getPieceAtPosition
@@ -186,7 +186,7 @@ class ChessState : ChessGameInfo, Serializable {
      * @return The piece at this position.
      */
     fun getPieceAtPosition(position: Point): Piece? {
-        val pieceToGet = board[position] ?: return null
+        val pieceToGet = this.board[position] ?: return null
 
         // Uses Piece's copy constructor to get deep copy.
         return Piece(pieceToGet)
@@ -199,7 +199,7 @@ class ChessState : ChessGameInfo, Serializable {
      * @param playerId The ID of the player (0 or 1).
      * @return A deep copy of the position of the player's king.
      */
-    fun getKingPosition(playerId: Int): Point? = board.entries.singleOrNull {
+    fun getKingPosition(playerId: Int): Point? = this.board.entries.singleOrNull {
         val piece = it.value
         piece.pieceType == PieceType.KING && piece.player == playerId
     }?.key
@@ -211,5 +211,5 @@ class ChessState : ChessGameInfo, Serializable {
      * @param playerId The player ID to check.
      * @return A HashMap mapping each position of the player's pieces to the Piece.
      */
-    fun getPlayerPieces(playerId: Int): Map<Point, Piece> = board.filter { it.value.player == playerId }
+    fun getPlayerPieces(playerId: Int): Map<Point, Piece> = this.board.filter { it.value.player == playerId }
 }

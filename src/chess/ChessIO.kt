@@ -13,7 +13,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
  * Called by the ChessGame class.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
 class ChessIO {
     /**
@@ -24,7 +24,7 @@ class ChessIO {
      */
     private fun getFileChooser(): JFileChooser = JFileChooser().apply {
         // Can only open or save a chess state as a .txt file.
-        fileFilter = FileNameExtensionFilter("Text Files: *.txt", "txt")
+        this.fileFilter = FileNameExtensionFilter("Text Files: *.txt", "txt")
     }
 
     /**
@@ -37,12 +37,12 @@ class ChessIO {
     fun saveGame(stateToSave: ChessState) {
         // Create the save dialog.
         val saveDialog = JFrame().apply {
-            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+            this.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         }
 
         // Initialize the JFileChooser.
-        val fileChooser = getFileChooser().apply {
-            dialogTitle = "Please choose a save location and name."
+        val fileChooser = this.getFileChooser().apply {
+            this.dialogTitle = "Please choose a save location and name."
         }
 
         val filename: File
@@ -87,12 +87,12 @@ class ChessIO {
     fun openGame(): ChessState? {
         // Create the open dialog.
         val openDialog = JFrame().apply {
-            defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
+            this.defaultCloseOperation = WindowConstants.EXIT_ON_CLOSE
         }
 
         // Initialize the JFileChooser
-        val fileChooser = getFileChooser().apply {
-            dialogTitle = "Please choose a saved game file to open."
+        val fileChooser = this.getFileChooser().apply {
+            this.dialogTitle = "Please choose a saved game file to open."
         }
 
         // Gets the filename if the user selected "OK". Otherwise, returns.

@@ -28,22 +28,22 @@ class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseLis
      */
     override fun mouseClicked(mouseEvent: MouseEvent) {
         // Get the current chess state.
-        val chessState = chessGui.chessState
+        val chessState = this.chessGui.chessState
 
         // Uses the x and y position of the mouse
         // w/ the scaleDim of the game to calculate the position clicked on the board.
         val clickedPoint = Helpers.getValidPointOrEmpty(
-                Point(mouseEvent.x, mouseEvent.y), chessGui.scaleDim
+                Point(mouseEvent.x, mouseEvent.y), this.chessGui.scaleDim
         )
 
         // The previously set Point is retrieved.
-        val previousClickedPoint = chessGui.clickedPoint
+        val previousClickedPoint = this.chessGui.clickedPoint
 
         // If the user didn't click a valid point on the board.
         // Or, if the user selected the same position on the board (deselected a piece).
         if (clickedPoint == null || (clickedPoint == previousClickedPoint)) {
-            chessGui.clickedPoint = null
-            chessGui.repaint()
+            this.chessGui.clickedPoint = null
+            this.chessGui.repaint()
             return
         }
 
@@ -52,7 +52,7 @@ class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseLis
             chessState.getPieceAtPosition(clickedPoint)?.let {
                 // Makes sure the selected piece belongs to the current player.
                 if (chessState.isMyTurn(it.player)) {
-                    chessGui.clickedPoint = clickedPoint
+                    this.chessGui.clickedPoint = clickedPoint
                 } else {
                     System.err.println("It is not your turn!")
                 }
@@ -80,12 +80,12 @@ class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseLis
                 }
 
                 // Sends the stored action to the game and resets the clicked point.
-                chessGui.sendActionToGame(chessAction)
-                chessGui.clickedPoint = null
+                this.chessGui.sendActionToGame(chessAction)
+                this.chessGui.clickedPoint = null
             }
         }
 
-        chessGui.repaint()
+        this.chessGui.repaint()
     }
 
     /*

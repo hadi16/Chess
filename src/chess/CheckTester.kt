@@ -23,13 +23,13 @@ class CheckTester(private val chessState: ChessState) {
     init {
         // Loops through and adds each player's pieces and king position to the corresponding instance variables.
         for (playerId in 0 until Constants.NUM_PLAYERS) {
-            playerPieces.add(chessState.getPlayerPieces(playerId))
-            chessState.getKingPosition(playerId)?.let { kingPositions.add(it) }
+            this.playerPieces.add(this.chessState.getPlayerPieces(playerId))
+            this.chessState.getKingPosition(playerId)?.let { this.kingPositions.add(it) }
         }
 
         // Loops through and determines which player(s) are in check (if any)
         for (playerId in 0 until Constants.NUM_PLAYERS) {
-            playersChecked.add(playerInCheck(playerId))
+            this.playersChecked.add(this.playerInCheck(playerId))
         }
     }
 
@@ -42,14 +42,14 @@ class CheckTester(private val chessState: ChessState) {
      */
     private fun playerInCheck(playerId: Int): Boolean {
         // Gets the position of the player's king and their enemy's pieces.
-        val myKingPosition = kingPositions[playerId]
-        val enemyPlayerPieces = playerPieces[1 - playerId]
+        val myKingPosition = this.kingPositions[playerId]
+        val enemyPlayerPieces = this.playerPieces[1 - playerId]
 
         // Loops through and determines if any of the enemy's pieces
         // can legally attack their king (means they are in check).
         return enemyPlayerPieces.any {
             val position = it.key
-            return ChessRules(position, chessState).isLegalMove(myKingPosition)
+            return ChessRules(position, this.chessState).isLegalMove(myKingPosition)
         }
     }
 
@@ -59,5 +59,5 @@ class CheckTester(private val chessState: ChessState) {
      *
      * @return The player ID of the player in check (or -1 if neither are in check).
      */
-    fun playerInCheck(): Int = playersChecked.indexOf(true)
+    fun playerInCheck(): Int = this.playersChecked.indexOf(true)
 }

@@ -10,7 +10,7 @@ import chess.info.NotYourTurnInfo
  * The local chess game. Where the program is executed from.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
 class ChessGame {
     // The references to the GUI and IO for the program (never reassigned).
@@ -23,16 +23,16 @@ class ChessGame {
 
     // Creates a new chess game.
     init {
-        chessState = ChessState()
-        chessGui = ChessGui(this, chessState)
-        chessGui.updateCurrentPlayerLegalMoves()
+        this.chessState = ChessState()
+        this.chessGui = ChessGui(this, this.chessState)
+        this.chessGui.updateCurrentPlayerLegalMoves()
     }
 
     /**
      * Method: sendUpdatedStateToGui
      * Sends a deep copy of the master ChessState to the ChessGui reference.
      */
-    private fun sendUpdatedStateToGui() = chessGui.receiveInfo(ChessState(chessState))
+    private fun sendUpdatedStateToGui() = this.chessGui.receiveInfo(ChessState(this.chessState))
 
     /**
      * Method: canMove
@@ -41,7 +41,7 @@ class ChessGame {
      * @param playerId The player number to check.
      * @return true if the player is allowed to make a move (otherwise false).
      */
-    private fun canMove(playerId: Int): Boolean = chessState.isMyTurn(playerId)
+    private fun canMove(playerId: Int): Boolean = this.chessState.isMyTurn(playerId)
 
     /**
      * Method: receiveAction
@@ -55,36 +55,36 @@ class ChessGame {
         if (action is ChessMenuAction) {
             when (action) {
                 // Case 1: The "New" menu item was clicked (reset the game).
-                is ResetGameAction -> chessState = ChessState()
+                is ResetGameAction -> this.chessState = ChessState()
 
                 // Case 2: The "Open" menu item was clicked (trigger the open dialog).
-                is OpenGameAction -> chessIO.openGame()?.let { chessState = it }
+                is OpenGameAction -> this.chessIO.openGame()?.let { this.chessState = it }
 
                 // Case 3: The "Save" menu item was clicked (trigger the save dialog).
-                is SaveGameAction -> chessIO.saveGame(chessState)
+                is SaveGameAction -> this.chessIO.saveGame(this.chessState)
             }
 
             // If the user made a move, first check if it is valid.
             // Then, either send info that move was invalid or perform the move.
         } else if (action is ChessMoveAction) {
             // The player attempted to make a move when it isn't their turn.
-            if (!canMove(action.playerId)) {
-                chessGui.receiveInfo(NotYourTurnInfo())
+            if (!this.canMove(action.playerId)) {
+                this.chessGui.receiveInfo(NotYourTurnInfo())
                 return
             }
 
             // The player attempted to make an illegal move.
-            val chessRules = ChessRules(action.startPosition, chessState)
+            val chessRules = ChessRules(action.startPosition, this.chessState)
             if (!chessRules.isLegalMove(action.endPosition)) {
-                chessGui.receiveInfo(IllegalMoveInfo())
+                this.chessGui.receiveInfo(IllegalMoveInfo())
                 return
             }
 
-            chessState = chessState.getNextState(action)
+            this.chessState = this.chessState.getNextState(action)
         }
 
         // Send a deep copy of the updated master state to the GUI.
-        sendUpdatedStateToGui()
+        this.sendUpdatedStateToGui()
     }
 }
 

@@ -15,7 +15,7 @@ class PawnPromotionGui {
     val selectedPieceType: PieceType
 
     init {
-        selectedPieceType = showSelectionGuiAndReturnResult()
+        this.selectedPieceType = this.showSelectionGuiAndReturnResult()
     }
 
     /**

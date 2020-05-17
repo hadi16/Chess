@@ -17,7 +17,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
     private val board: Map<Point, Piece>
 
     init {
-        board = currentState.board
+        this.board = currentState.board
     }
 
     /**
@@ -30,12 +30,12 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
     private fun notFriendlyFire(endPosition: Point): Boolean {
         // If the board doesn't contain the position,
         // the move doesn't constitute friendly fire.
-        if (!board.containsKey(endPosition)) {
+        if (!this.board.containsKey(endPosition)) {
             return true
         }
 
         // Check to make sure that the starting position's player doesn't equal the ending position's player.
-        return board[startPosition]?.player != board[endPosition]?.player
+        return this.board[this.startPosition]?.player != this.board[endPosition]?.player
     }
 
     /**
@@ -49,8 +49,8 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
     private fun getLegalEndPointsInDirection(direction: Direction, maxPoints: Int): ArrayList<Point> {
         // Add the x & y value to the current position's x & y and construct as a new position.
         var currentPosition = Point(
-                startPosition.x + direction.x,
-                startPosition.y + direction.y
+                this.startPosition.x + direction.x,
+                this.startPosition.y + direction.y
         )
 
         // The end points must be in bounds.
@@ -58,9 +58,9 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
         val legalEndPoints = ArrayList<Point>()
         while (Helpers.positionInBounds(currentPosition) && legalEndPoints.size < maxPoints) {
             // If the position has a piece in it.
-            if (board.containsKey(currentPosition)) {
+            if (this.board.containsKey(currentPosition)) {
                 // As long as it is not one of the player's own pieces, they can attack it.
-                if (notFriendlyFire(currentPosition)) {
+                if (this.notFriendlyFire(currentPosition)) {
                     legalEndPoints.add(currentPosition)
                 }
 
@@ -93,7 +93,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
     ): ArrayList<Point> {
         val legalEndPoints = ArrayList<Point>()
         for (direction in directions) {
-            legalEndPoints.addAll(getLegalEndPointsInDirection(direction, maxPointsPerDirection))
+            legalEndPoints.addAll(this.getLegalEndPointsInDirection(direction, maxPointsPerDirection))
         }
         return legalEndPoints
     }
@@ -108,7 +108,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
      */
     private fun getAllLegalEndPointsForDirections(
             directions: List<Direction>
-    ): ArrayList<Point> = getAllLegalEndPointsForDirections(directions, Constants.BOARD_WIDTH - 1)
+    ): ArrayList<Point> = this.getAllLegalEndPointsForDirections(directions, Constants.BOARD_WIDTH - 1)
 
     /**
      * Helper Method: getKnightLegalEndPoints
@@ -128,11 +128,11 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
         // Goes through each of the legal knight directions.
         val knightLegalEndPoints = ArrayList<Point>()
         for (direction: Point in ALL_KNIGHT_DIRECTIONS) {
-            val endPosition = Point(startPosition.x + direction.x, startPosition.y + direction.y)
+            val endPosition = Point(this.startPosition.x + direction.x, this.startPosition.y + direction.y)
 
             // Checks to make sure this position is in bounds & not friendly fire.
             // If so, it is a legal end point, so it is added.
-            if (Helpers.positionInBounds(endPosition) && notFriendlyFire(endPosition)) {
+            if (Helpers.positionInBounds(endPosition) && this.notFriendlyFire(endPosition)) {
                 knightLegalEndPoints.add(endPosition)
             }
         }
@@ -147,18 +147,18 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
      */
     private fun getPawnLegalEndPoints(): ArrayList<Point> {
         // Create the list of legal end points to return & get the pawn.
-        val pawn = board[startPosition] ?: return ArrayList()
+        val pawn = this.board[this.startPosition] ?: return ArrayList()
 
         val pawnLegalEndPoints = ArrayList<Point>()
         // Goes through the attacking directions & adds at most one position.
         for (direction in Direction.getPawnAttackingDirections(pawn.player)) {
             val attackingPosition = Point(
-                    startPosition.x + direction.x,
-                    startPosition.y + direction.y
+                    this.startPosition.x + direction.x,
+                    this.startPosition.y + direction.y
             )
 
             // There must be a piece to attack and it must not be friendly fire.
-            if (board.containsKey(attackingPosition) && notFriendlyFire(attackingPosition)) {
+            if (this.board.containsKey(attackingPosition) && this.notFriendlyFire(attackingPosition)) {
                 pawnLegalEndPoints.add(attackingPosition)
             }
         }
@@ -170,7 +170,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
         // Otherwise, it can only move one space forward.
         val maxDistance = if (pawn.moved) 1 else 2
 
-        var currentPosition = Point(startPosition.x, startPosition.y)
+        var currentPosition = Point(this.startPosition.x, this.startPosition.y)
         for (i in 0 until maxDistance) {
             currentPosition = Point(
                     currentPosition.x + regularDirection.x,
@@ -178,7 +178,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
             )
 
             // There can't be any obstructing pieces when pawn is moving regularly.
-            if (board.containsKey(currentPosition)) {
+            if (this.board.containsKey(currentPosition)) {
                 break
             }
 
@@ -199,31 +199,31 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
      */
     fun getLegalEndPointsForPosition(): ArrayList<Point> {
         // If the position is empty, it can clearly go nowhere (empty list).
-        if (!board.containsKey(startPosition)) {
+        if (!this.board.containsKey(this.startPosition)) {
             return arrayListOf()
         }
 
         // Checks the piece type.
-        val pieceToCheck = board[startPosition]
+        val pieceToCheck = this.board[this.startPosition]
         when (pieceToCheck?.pieceType) {
             PieceType.PAWN ->
                 // Pawn moves are more complex (uses dedicated method)
-                return getPawnLegalEndPoints()
+                return this.getPawnLegalEndPoints()
             PieceType.ROOK ->
                 // Rooks can move in any cardinal direction.
-                return getAllLegalEndPointsForDirections(Constants.CARDINAL_DIRECTIONS)
+                return this.getAllLegalEndPointsForDirections(Constants.CARDINAL_DIRECTIONS)
             PieceType.KNIGHT ->
                 // Knight moves are a special case (handled with dedicated method)
-                return getKnightLegalEndPoints()
+                return this.getKnightLegalEndPoints()
             PieceType.BISHOP ->
                 // Bishops can move in all diagonal directions.
-                return getAllLegalEndPointsForDirections(Constants.DIAGONAL_DIRECTIONS)
+                return this.getAllLegalEndPointsForDirections(Constants.DIAGONAL_DIRECTIONS)
             PieceType.QUEEN ->
                 // Queens can move in any direction.
-                return getAllLegalEndPointsForDirections(Constants.ALL_DIRECTIONS)
+                return this.getAllLegalEndPointsForDirections(Constants.ALL_DIRECTIONS)
             PieceType.KING ->
                 // Kings can move in any direction (but only one tile).
-                return getAllLegalEndPointsForDirections(Constants.ALL_DIRECTIONS, 1)
+                return this.getAllLegalEndPointsForDirections(Constants.ALL_DIRECTIONS, 1)
             else ->
                 return arrayListOf()
         }
@@ -238,7 +238,7 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
      */
     fun isLegalMove(endPosition: Point): Boolean {
         // Get the list of all legal end points and determine if the point is in the list.
-        val legalEndPoints = getLegalEndPointsForPosition()
+        val legalEndPoints = this.getLegalEndPointsForPosition()
         return legalEndPoints.contains(endPosition)
     }
 
@@ -251,12 +251,12 @@ class ChessRules(private val startPosition: Point, currentState: ChessState) {
      */
     fun canPromotePawn(endPosition: Point): Boolean {
         // It must be a legal move.
-        if (!isLegalMove(endPosition)) {
+        if (!this.isLegalMove(endPosition)) {
             return false
         }
 
         // Must be a pawn to promote it.
-        val pieceToMove = board[startPosition]
+        val pieceToMove = this.board[this.startPosition]
         if (pieceToMove?.pieceType != PieceType.PAWN) {
             return false
         }
