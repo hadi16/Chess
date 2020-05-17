@@ -20,18 +20,16 @@ import javax.swing.WindowConstants
  * The GUI in the game.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessGui : JPanel {
-    // The reference to ChessGame & JFrame
-    private val chessGame: ChessGame
+class ChessGui(private val chessGame: ChessGame, chessState: ChessState) : JPanel() {
     private val chessGameFrame = JFrame("Chess")
 
     // Maps each Point to a list of legal end points.
     private val currentPlayerLegalMoves: HashMap<Point, ArrayList<Point>> = hashMapOf()
 
     // The current state of the game.
-    var chessState: ChessState
+    var chessState: ChessState = chessState
         get() = ChessState(field)
         private set
 
@@ -58,16 +56,7 @@ class ChessGui : JPanel {
     // The current scaling factor of the game.
     var scaleDim: Int = 1
 
-    /**
-     * Constructor: ChessGui
-     * Creates a new GUI for the game.
-     *
-     * @param chessGame The reference to ChessGame.
-     */
-    constructor(chessGame: ChessGame, chessState: ChessState) {
-        this.chessGame = chessGame
-        this.chessState = chessState
-
+    init {
         // Add the mouse listeners (for clicking and hovering)
         addMouseListener(ChessMouseListener(this))
         addMouseMotionListener(ChessMouseMotionListener(this))

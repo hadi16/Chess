@@ -12,17 +12,9 @@ import java.awt.event.MouseMotionListener
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessMouseMotionListener : ChessListener, MouseMotionListener {
-    /**
-     * Constructor: ChessMouseMotionListener
-     * Creates a new mouse motion listener for the game.
-     *
-     * @param chessGui The reference to the game's GUI.
-     */
-    constructor(chessGui: ChessGui) : super(chessGui)
-
+class ChessMouseMotionListener(chessGui: ChessGui) : ChessListener(chessGui), MouseMotionListener {
     /**
      * Overridden Method: mouseMoved
      * Called when the mouse cursor is moved by the user.

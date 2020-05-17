@@ -16,17 +16,9 @@ import java.awt.event.ActionListener
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessMenuBarListener : ChessListener, ActionListener {
-    /**
-     * Constructor: ChessMenuBarListener
-     * Creates a new listener for the menu bar.
-     *
-     * @param chessGui The reference to the game's GUI.
-     */
-    constructor(chessGui: ChessGui) : super(chessGui)
-
+class ChessMenuBarListener(chessGui: ChessGui) : ChessListener(chessGui), ActionListener {
     /**
      * Overridden Method: actionPerformed
      * Called when the user clicks on a menu bar item.
@@ -36,11 +28,10 @@ class ChessMenuBarListener : ChessListener, ActionListener {
     override fun actionPerformed(e: ActionEvent) {
         // The user should have either clicked the
         // open, save, or reset buttons on the menu.
-        val chessMenuAction: ChessMenuAction
-        when (e.actionCommand) {
-            Constants.NEW_GAME_MENU_TEXT -> chessMenuAction = ResetGameAction()
-            Constants.OPEN_GAME_MENU_TEXT -> chessMenuAction = OpenGameAction()
-            Constants.SAVE_GAME_MENU_TEXT -> chessMenuAction = SaveGameAction()
+        val chessMenuAction: ChessMenuAction = when (e.actionCommand) {
+            Constants.NEW_GAME_MENU_TEXT -> ResetGameAction()
+            Constants.OPEN_GAME_MENU_TEXT -> OpenGameAction()
+            Constants.SAVE_GAME_MENU_TEXT -> SaveGameAction()
 
             else -> {
                 System.err.println("An invalid menu item was clicked!")

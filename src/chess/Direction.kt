@@ -6,9 +6,9 @@ package chess
  * (North, South, East, West, Northeast, Northwest, Southeast, and Southwest)
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-enum class Direction {
+enum class Direction(val x: Int, val y: Int) {
     NORTH(0, -1),
     EAST(1, 0),
     SOUTH(0, 1),
@@ -17,23 +17,6 @@ enum class Direction {
     NORTHWEST(-1, -1),
     SOUTHEAST(1, 1),
     SOUTHWEST(-1, 1);
-
-    // The x & y value associated with the direction.
-    // Each is one of these values: -1, 0, 1
-    val x: Int
-    val y: Int
-
-    /**
-     * Constructor: Direction
-     * Creates a Direction using the prescribed x & y values.
-     *
-     * @param x The x value (-1, 0, or 1).
-     * @param y The y value (-1, 0, or 1).
-     */
-    constructor(x: Int, y: Int) {
-        this.x = x
-        this.y = y
-    }
 
     companion object {
         /**

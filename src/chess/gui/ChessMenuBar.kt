@@ -11,18 +11,12 @@ import javax.swing.JMenuItem
  * Creates the menu bar for the game's GUI.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessMenuBar {
+class ChessMenuBar(mainGui: ChessGui) {
     val menuBar: JMenuBar
 
-    /**
-     * Constructor: ChessMenuBar
-     * Creates the menu bar and sets it to the private instance variable.
-     *
-     * @param mainGui The reference to the game's main GUI.
-     */
-    constructor(mainGui: ChessGui) {
+    init {
         // Required for macOS menu bar functionality
         System.setProperty("apple.laf.useScreenMenuBar", "true")
 

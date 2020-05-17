@@ -8,12 +8,9 @@ import java.util.*
  * Determines which player is in check (if any).
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class CheckTester {
-    // The current state
-    private val chessState: ChessState
-
+class CheckTester(private val chessState: ChessState) {
     // The positions of each player's king (index 0 maps to position for player 0's king, etc.)
     private val kingPositions = ArrayList<Point>()
 
@@ -23,15 +20,7 @@ class CheckTester {
     // Whether each player is in check (index 0 is true if player 0 is in check, etc.)
     private val playersChecked = ArrayList<Boolean>()
 
-    /**
-     * Constructor: CheckTester
-     * Creates a new CheckTester object.
-     *
-     * @param chessState The current state of the game.
-     */
-    constructor(chessState: ChessState) {
-        this.chessState = chessState
-
+    init {
         // Loops through and adds each player's pieces and king position to the corresponding instance variables.
         for (playerId in 0 until Constants.NUM_PLAYERS) {
             playerPieces.add(chessState.getPlayerPieces(playerId))

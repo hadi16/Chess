@@ -10,24 +10,13 @@ import java.util.*
  * Note: en passant & castling are not supported yet.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessRules {
-    // The starting position to check (never reassigned).
-    private val startPosition: Point
-
+class ChessRules(private val startPosition: Point, currentState: ChessState) {
     // The current board (never reassigned).
     private val board: Map<Point, Piece>
 
-    /**
-     * Constructor: ChessRules
-     * Creates a new ChessRules object.
-     *
-     * @param startPosition The start position to check.
-     * @param currentState The current state of the game.
-     */
-    constructor(startPosition: Point, currentState: ChessState) {
-        this.startPosition = startPosition
+    init {
         board = currentState.board
     }
 

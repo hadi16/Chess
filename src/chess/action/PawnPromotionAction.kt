@@ -9,24 +9,8 @@ import java.awt.Point
  * Inherits from ChessMoveAction.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class PawnPromotionAction : ChessMoveAction {
-    // The promoted piece type can never be reassigned.
-    val promotedPieceType: PieceType
-
-    /**
-     * Constructor: PawnPromotionAction
-     * Creates a new action to promote a pawn.
-     *
-     * @param playerId The player's ID.
-     * @param startPoint The starting position of the pawn.
-     * @param endPoint The ending position of the pawn.
-     * @param promotedPieceType The type of piece that the player wishes to promote the pawn to.
-     */
-    constructor(
-            playerId: Int, startPoint: Point, endPoint: Point, promotedPieceType: PieceType
-    ) : super(playerId, startPoint, endPoint) {
-        this.promotedPieceType = promotedPieceType
-    }
-}
+class PawnPromotionAction(
+        playerId: Int, startPoint: Point, endPoint: Point, val promotedPieceType: PieceType
+) : ChessMoveAction(playerId, startPoint, endPoint)

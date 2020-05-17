@@ -13,17 +13,9 @@ import kotlin.math.min
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessComponentListener : ChessListener, ComponentListener {
-    /**
-     * Constructor: ChessComponentListener
-     * Creates a new component listener for the game.
-     *
-     * @param chessGui The reference to the game's GUI.
-     */
-    constructor(chessGui: ChessGui) : super(chessGui)
-
+class ChessComponentListener(chessGui: ChessGui) : ChessListener(chessGui), ComponentListener {
     /**
      * Overridden Method: componentResized
      * Calls setGameSize() when the game window is resized by the user.

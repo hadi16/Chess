@@ -9,16 +9,12 @@ import javax.swing.JOptionPane
  * Allows the user to select which piece type to promote their pawn to.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
 class PawnPromotionGui {
     val selectedPieceType: PieceType
 
-    /**
-     * Constructor: PawnPromotionGui
-     * Creates the GUI to select the piece type for pawn promotion.
-     */
-    constructor() {
+    init {
         selectedPieceType = showSelectionGuiAndReturnResult()
     }
 

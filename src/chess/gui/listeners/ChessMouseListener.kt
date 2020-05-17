@@ -17,17 +17,9 @@ import java.awt.event.MouseListener
  * Inherits from ChessListener.
  *
  * @author Alex Hadi
- * @version July 2019
+ * @version May 2020
  */
-class ChessMouseListener : ChessListener, MouseListener {
-    /**
-     * Constructor: ChessMouseListener
-     * Creates a new mouse listener for the game.
-     *
-     * @param chessGui The reference to the game's GUI.
-     */
-    constructor(chessGui: ChessGui) : super(chessGui)
-
+class ChessMouseListener(chessGui: ChessGui) : ChessListener(chessGui), MouseListener {
     /**
      * Overridden Method: mouseClicked
      * Called when the user clicks on the GUI.
@@ -72,13 +64,11 @@ class ChessMouseListener : ChessListener, MouseListener {
                 // Checks if the pawn can be promoted.
                 val chessRules = ChessRules(previousClickedPoint, chessState)
 
-                val chessAction: ChessAction
                 val player = it.player
-
-                if (chessRules.canPromotePawn(clickedPoint)) {
+                val chessAction: ChessAction = if (chessRules.canPromotePawn(clickedPoint)) {
                     // Shows the GUI to the user to select the promoted piece type.
                     val promotionGui = PawnPromotionGui()
-                    chessAction = PawnPromotionAction(
+                    PawnPromotionAction(
                             player,
                             previousClickedPoint,
                             clickedPoint,
@@ -86,7 +76,7 @@ class ChessMouseListener : ChessListener, MouseListener {
                     )
                 } else {
                     // Should just be a normal move action.
-                    chessAction = ChessMoveAction(player, previousClickedPoint, clickedPoint)
+                    ChessMoveAction(player, previousClickedPoint, clickedPoint)
                 }
 
                 // Sends the stored action to the game and resets the clicked point.
